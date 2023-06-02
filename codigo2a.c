@@ -36,14 +36,17 @@ const int W_HEIGHT = 500;		//Alto de la ventana
 //Milisegundos que tarda en redibujar
 #define MYTIEMPO 41
 
-// ¡ngulos de rotaciÛn para la c·mara
+// √Ångulos de rotaci√≥n para la c√°mara
 static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
 
 float Rot = 0;
 camara = 0;
 sueloScale = 25;
-int cuadrado = 0;
+int cuadrado = 0, cono = 0, cilindro = 0, rectangulo = 0;
+
+const int SLICES = 32;
+const int STACKS = 32;
 
 extern myCamara();
 
@@ -135,16 +138,77 @@ int myCuadrado() {
 	return indice;
 }
 
+int myCono() {
+	int indice = glGenLists(1);
+	glNewList(indice, GL_COMPILE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(1, 1, 1, 0.5);
+
+	GLUquadric* quadric = gluNewQuadric();
+	gluQuadricNormals(quadric, GLU_SMOOTH);
+
+	glPushMatrix();
+	gluCylinder(quadric, 0.0f, 1.0f, 1.0f, SLICES, STACKS);
+	glPopMatrix();
+
+	gluDeleteQuadric(quadric);
+	glEndList();
+	return indice;
+}
+
+int myCilindro() {
+	int indice = glGenLists(1);
+	glNewList(indice, GL_COMPILE);
+	glEnable(GL_BLEND);
+	glColor3f(1, 0, 1);
+
+	GLUquadric* quadric = gluNewQuadric();
+	gluQuadricNormals(quadric, GLU_SMOOTH);
+
+	glPushMatrix();
+	gluCylinder(quadric, 1.0f, 1.0f, 1.0f, SLICES, STACKS);
+	glPopMatrix();
+
+	gluDeleteQuadric(quadric);
+	glEndList();
+	return indice;
+}
+
+int myRectangulo() {
+	int indice = glGenLists(1);
+	glNewList(indice, GL_COMPILE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glColor4f(1, 1, 1, 0.5);
+
+	glBegin(GL_TRIANGLES);
+
+	glVertex3f(0, 0, 0);
+	glVertex3f(1, 0, 0);
+	glVertex3f(1, 1, 0);
+
+	glVertex3f(1, 1, 0);
+	glVertex3f(0, 1, 0);
+	glVertex3f(0, 0, 0);
+
+	glEnd();
+
+	glEndList();
+	return indice;
+}
+
 
 //Funcion para dibujar el suelo
 void dibujaSuelo() {
 
 	glColor3f(1, 1, 0);
-	for (int i = -200; i <= 200; i += sueloScale)
-		for (int j = -200; j <= 200; j += sueloScale) {
+	for (int i = -500; i <= 500; i += sueloScale)
+		for (int j = -500; j <= 500; j += sueloScale) {
 			glPushMatrix();
-				glTranslatef(i, j, 0);
+				glTranslatef(i, 0, j);
 				glScalef(sueloScale, sueloScale, sueloScale);
+				glRotatef(-90.0f, 1, 0, 0);
 				glCallList(cuadrado);
 			glPopMatrix();
 		}
@@ -153,6 +217,45 @@ void dibujaSuelo() {
 		glTranslatef(50, -25, 0);
 		glScalef(50, 50, 1);
 		glColor4f(1, 1, 1, 0.5);
+	glPopMatrix();
+
+}
+
+void dibujaTorre() {
+
+	//Torre frontal 1
+	glPushMatrix();
+		//en el origen
+		glTranslatef(100, -25, 100);
+		glScalef(25, 100, 25);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glCallList(cilindro);
+	glPopMatrix();
+
+	//Torre frontal 2
+	glPushMatrix();
+		//traslado 200 en el eje x
+		glTranslatef(-100, -25, 100);
+		glScalef(25, 100, 25);
+		glRotatef(-90.0f, 1, 0, 0);
+		glCallList(cilindro);
+	glPopMatrix();
+
+	//Torre trasera 1
+	glPushMatrix();
+		glTranslatef(100, -25, -100);
+		glScalef(25, 100, 25);
+		glRotatef(-90.0f, 1, 0, 0);
+		glCallList(cilindro);
+	glPopMatrix();
+
+	//Torre trasera 2
+	glPushMatrix();
+		glTranslatef(-100, -25, -100);
+		glScalef(25, 100, 25);
+		glRotatef(-90.0f, 1, 0, 0);
+		glCallList(cilindro);
 	glPopMatrix();
 
 }
@@ -185,9 +288,10 @@ void myDisplay(void) {
 
 	glMatrixMode(GL_MODELVIEW); //Matriz del Modelo
 	glLoadIdentity(); // Inicializamos la matriz del modelo a la identidad
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	dibujaSuelo();
+	dibujaTorre();
 	myEjes();
 	glScalef(.5f, .5f,.5f);
 		
@@ -220,6 +324,8 @@ int main(int argc, char **argv) {
 	//myMovimiento();
 	myMenu();
 	cuadrado = myCuadrado();
+	cilindro = myCilindro();
+	cono = myCono();
 
 	// Empieza en bucle principal
 	glutMainLoop();
