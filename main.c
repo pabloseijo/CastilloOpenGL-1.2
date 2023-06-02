@@ -1,3 +1,27 @@
+/****************************************************************************
+julian.flores@usc.es
+
+
+El frustrum corresponde a la proyeccion
+glOrtho(-100.0,100.0f,-100.0,100.0f,-100.0,100.0f);
+
+Tareas a hacer.
+
+Genera las mismas figuras con
+Razona que pasa en cada caso.
+GL_LINES
+GL_LINE_STRIP
+GL_LINE_LOOP
+GL_TRIANGLES
+GL_QUADS
+GL_POLYGON
+
+Usa la funcion glPolygonMode
+
+******************************************************************************/
+
+
+
 #include <windows.h>	//Inclusion de variables de windows
 
 #include <glut.h>	//Inclusion de GLUT mira que la tienes ahi
@@ -114,12 +138,12 @@ int myCuadrado() {
 	return indice;
 }
 
+//Lista del cono
 int myCono() {
 	int indice = glGenLists(1);
 	glNewList(indice, GL_COMPILE);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4f(1, 1, 1, 0.5);
+	glColor3f(0, 0, 1);
 
 	GLUquadric* quadric = gluNewQuadric();
 	gluQuadricNormals(quadric, GLU_SMOOTH);
@@ -133,11 +157,12 @@ int myCono() {
 	return indice;
 }
 
+//Lista del Cilindro
 int myCilindro() {
 	int indice = glGenLists(1);
 	glNewList(indice, GL_COMPILE);
 	glEnable(GL_BLEND);
-	glColor3f(1, 0, 1);
+	glColor3f(1, 0, 0);
 
 	GLUquadric* quadric = gluNewQuadric();
 	gluQuadricNormals(quadric, GLU_SMOOTH);
@@ -151,30 +176,67 @@ int myCilindro() {
 	return indice;
 }
 
+//Lista del subo
 int myRectangulo() {
-	int indice = glGenLists(1);
+	int indice;
+	indice = glGenLists(1);
 	glNewList(indice, GL_COMPILE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glColor4f(1, 1, 1, 0.5);
+
+	glColor3f(0, 1, 0);
 
 	glBegin(GL_TRIANGLES);
+	//CUADRADO 1
+	glVertex3f(.5f, -.5f, -.5f);
+	glVertex3f(-.5f, -.5f, -.5f);
+	glVertex3f(.5f, .5f, -.5f);
+	glVertex3f(-.5f, -.5f, -.5f);
+	glVertex3f(-.5f, .5f, -.5f);
+	glVertex3f(.5f, .5f, -.5f);
 
-	glVertex3f(0, 0, 0);
-	glVertex3f(1, 0, 0);
-	glVertex3f(1, 1, 0);
+	//CUADRADO 2
+	glVertex3f(-.5f, -.5f, .5f);
+	glVertex3f(.5f, -.5f, .5f);
+	glVertex3f(.5f, .5f, .5f);
+	glVertex3f(-.5f, .5f, .5f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glVertex3f(.5f, .5f, .5f);
 
-	glVertex3f(1, 1, 0);
-	glVertex3f(0, 1, 0);
-	glVertex3f(0, 0, 0);
+	//CUADRADO 3
+	glVertex3f(-.5f, .5f, -.5f);
+	glVertex3f(-.5f, -.5f, -.5f);
+	glVertex3f(-.5f, .5f, .5f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glVertex3f(-.5f, .5f, .5f);
+	glVertex3f(-.5f, -.5f, -.5f);
+
+	//CUADRADO 4
+	glVertex3f(.5f, -.5f, -.5f);
+	glVertex3f(.5f, .5f, -.5f);
+	glVertex3f(.5f, .5f, .5f);
+	glVertex3f(.5f, .5f, .5f);
+	glVertex3f(.5f, -.5f, .5f);
+	glVertex3f(.5f, -.5f, -.5f);
+
+	//CUADRADO 5
+	glVertex3f(.5f, -.5f, -.5f);
+	glVertex3f(.5f, -.5f, .5f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glVertex3f(-.5f, -.5f, .5f);
+	glVertex3f(-.5f, -.5f, -.5f);
+	glVertex3f(.5f, -.5f, -.5f);
+
+	//CUADRADO 6
+	glVertex3f(.5f, .5f, .5f);
+	glVertex3f(.5f, .5f, -.5f);
+	glVertex3f(-.5f, .5f, -.5f);
+	glVertex3f(-.5f, .5f, -.5f);
+	glVertex3f(-.5f, .5f, .5f);
+	glVertex3f(.5f, .5f, .5f);
 
 	glEnd();
-
 	glEndList();
 	return indice;
 }
-
-
 //Funcion para dibujar el suelo
 void dibujaSuelo() {
 
@@ -197,11 +259,50 @@ void dibujaSuelo() {
 
 }
 
+void dibujaMuros() {
+	//Muro Frontal 
+	glPushMatrix();
+	glTranslatef(0, 0, 100);
+		glScalef(175, 50, 20);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glCallList(rectangulo);
+	glPopMatrix();
+
+	//Muro Lateral Izq
+	glPushMatrix();
+		glTranslatef(-100, 0, 0);
+		glRotatef(-90.0f, 0, 1, 0);
+		glScalef(175, 50, 20);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glCallList(rectangulo);
+	glPopMatrix();
+
+	//Muro Lateral Dcho
+	glPushMatrix();
+		glTranslatef(100, 0, 0);
+		glRotatef(-90.0f, 0, 1, 0);
+		glScalef(175, 50, 20);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glCallList(rectangulo);
+	glPopMatrix();
+
+	//Muro Trasero 
+	glPushMatrix();
+		glTranslatef(0, 0, -100);
+		glScalef(175, 50, 20);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glCallList(rectangulo);
+	glPopMatrix();
+}
+
 void dibujaTorre() {
 
-	//Torre frontal 1
+	//Torre frontal 1: paredes
 	glPushMatrix();
-		//en el origen
 		glTranslatef(100, -25, 100);
 		glScalef(25, 100, 25);
 		//Lo roto para ponerlo de pie
@@ -209,7 +310,16 @@ void dibujaTorre() {
 		glCallList(cilindro);
 	glPopMatrix();
 
-	//Torre frontal 2
+	//Torre frontal 1: tejado
+	glPushMatrix();
+		glTranslatef(100, 100, 100);
+		glScalef(35, 35, 35);
+		//Lo roto para ponerlo de pie
+		glRotatef(90.0f, 1, 0, 0);
+		glCallList(cono);
+	glPopMatrix();
+
+	//Torre frontal 2: paredes
 	glPushMatrix();
 		//traslado 200 en el eje x
 		glTranslatef(-100, -25, 100);
@@ -218,7 +328,16 @@ void dibujaTorre() {
 		glCallList(cilindro);
 	glPopMatrix();
 
-	//Torre trasera 1
+	//Torre frontal 2: tejado
+	glPushMatrix();
+		glTranslatef(-100, 100, 100);
+		glScalef(35, 35, 35);
+		//Lo roto para ponerlo de pie
+		glRotatef(90.0f, 1, 0, 0);
+		glCallList(cono);
+	glPopMatrix();
+
+	//Torre trasera 1:paredes
 	glPushMatrix();
 		glTranslatef(100, -25, -100);
 		glScalef(25, 100, 25);
@@ -226,7 +345,16 @@ void dibujaTorre() {
 		glCallList(cilindro);
 	glPopMatrix();
 
-	//Torre trasera 2
+	//Torre trasera 1: tejado
+	glPushMatrix();
+		glTranslatef(100, 100, -100);
+		glScalef(35, 35, 35);
+		//Lo roto para ponerlo de pie
+		glRotatef(90.0f, 1, 0, 0);
+		glCallList(cono);
+	glPopMatrix();
+
+	//Torre trasera 2: paredes
 	glPushMatrix();
 		glTranslatef(-100, -25, -100);
 		glScalef(25, 100, 25);
@@ -234,6 +362,14 @@ void dibujaTorre() {
 		glCallList(cilindro);
 	glPopMatrix();
 
+	//Torre trasera 2: tejado
+	glPushMatrix();
+		glTranslatef(-100, 100, -100);
+		glScalef(35, 35, 35);
+		//Lo roto para ponerlo de pie
+		glRotatef(90.0f, 1, 0, 0);
+		glCallList(cono);
+	glPopMatrix();
 }
 
 void myMovimiento() {
@@ -268,6 +404,7 @@ void myDisplay(void) {
 
 	dibujaSuelo();
 	dibujaTorre();
+	dibujaMuros();
 	myEjes();
 	glScalef(.5f, .5f,.5f);
 		
@@ -302,6 +439,7 @@ int main(int argc, char **argv) {
 	cuadrado = myCuadrado();
 	cilindro = myCilindro();
 	cono = myCono();
+	rectangulo = myRectangulo();
 
 	// Empieza en bucle principal
 	glutMainLoop();
