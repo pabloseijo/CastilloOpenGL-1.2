@@ -7,7 +7,7 @@
 #include <math.h>	//Inclusion de librerias auxiliares	
 
 #define INCREMENTO .01
-#define DISTANCIA 3000
+#define DISTANCIA 1000
 #define PI 3.1416
 
 float alpha = 0;
@@ -15,22 +15,37 @@ float beta = 0;
 
 extern int W_HEIGHT, W_WIDTH;
 
-void myCamara(GLint W, GLint H) {
-		
+//void myCamara(GLint W, GLint H) {
+//		
+//	//Configuración de la matriz de proyeccion
+//	glMatrixMode(GL_PROJECTION);
+//	//La ponemos auno
+//	glLoadIdentity();
+//
+//	////Ajusta la vista a las dimensiones de la ventana
+//	glViewport(0, 0, W_WIDTH, W_HEIGHT);
+//
+//	//glOrtho(-1.0,1.0f,-1.0,1.0f,1.0,10.0f);  
+//	gluPerspective(30.0,(float)W_WIDTH / W_HEIGHT, 1.0, 5000.0f);
+//	gluLookAt(((float)DISTANCIA*(float) sin(alpha)*cos(beta)),((float)DISTANCIA*(float) sin(beta)), ((float)DISTANCIA*cos(alpha)*cos(beta)), 0,0,0,0,1,0);  
+//
+//}
+
+
+void myCamara(int ancho, int alto) {
+
 	//Configuración de la matriz de proyeccion
 	glMatrixMode(GL_PROJECTION);
-	//La ponemos auno
+	//La ponemos a uno
 	glLoadIdentity();
+	//Se pone una proyeccion ortografica, especificando que se verá desde -200 a la izquierda hasta 200 a la derecha, desde -200 hacia abajo hasta 200 hacia arriba y desde 1 como muy cerca hasta 2000 a lo lejos
+	//glOrtho(-200.0,200.0f,-200.0,200.0f,1.0,2000.0f);
+	gluPerspective(30.f, (float)ancho / (float)alto, 1.0, 2000);
+	//La camara se coloca segunlos valores de alpha y beta, a 1000 de distancia, cambiando al pulsar las flechas, mirando hacia el centro con la camara orientada sobre el eje Y
 
-	////Ajusta la vista a las dimensiones de la ventana
-	glViewport(0, 0, W_WIDTH, W_HEIGHT);
-
-	//glOrtho(-1.0,1.0f,-1.0,1.0f,1.0,10.0f);  
-	gluPerspective(30.0,(float)W_WIDTH / W_HEIGHT, 1.0, 5000.0f);
-	gluLookAt(((float)DISTANCIA*(float) sin(alpha)*cos(beta)),((float)DISTANCIA*(float) sin(beta)), ((float)DISTANCIA*cos(alpha)*cos(beta)), 0,0,0,0,1,0);  
+	gluLookAt(((float)DISTANCIA * (float)sin(alpha) * cos(beta)), ((float)DISTANCIA * (float)sin(beta)), ((float)DISTANCIA * cos(alpha) * cos(beta)), 0, 0, 0, 0, 1, 0);
 
 }
-
 
 void myTelescopio (float distancia, float angulo, float distanciaObj, float anguloObj) {
 
