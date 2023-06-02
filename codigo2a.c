@@ -1,27 +1,3 @@
-/****************************************************************************
-julian.flores@usc.es
-
-
-El frustrum corresponde a la proyeccion
-glOrtho(-100.0,100.0f,-100.0,100.0f,-100.0,100.0f);
-
-Tareas a hacer.
-
-Genera las mismas figuras con
-Razona que pasa en cada caso.
-GL_LINES
-GL_LINE_STRIP
-GL_LINE_LOOP
-GL_TRIANGLES
-GL_QUADS
-GL_POLYGON
-
-Usa la funcion glPolygonMode
-
-******************************************************************************/
-
-
-
 #include <windows.h>	//Inclusion de variables de windows
 
 #include <glut.h>	//Inclusion de GLUT mira que la tienes ahi
