@@ -17,7 +17,7 @@ extern int W_HEIGHT, W_WIDTH;
 
 void myCamara(GLint W, GLint H) {
 		
-	//Configuraci髇 de la matriz de proyeccion
+	//Configuraci贸n de la matriz de proyeccion
 	glMatrixMode(GL_PROJECTION);
 	//La ponemos auno
 	glLoadIdentity();
@@ -47,17 +47,17 @@ void myTelescopio (float distancia, float angulo, float distanciaObj, float angu
 
 void myTelescopioSatelite(float distancia, float angulo, float distanciaObj, float anguloObj) {
 
-	//Configuraci髇 de la matriz de proyecci髇
+	//Configuraci贸n de la matriz de proyecci贸n
 	glMatrixMode(GL_PROJECTION);
 
 	//La ponemos a uno
 	glLoadIdentity();
 	
-	//Calculamos la posici髇 de la luna en coordenadas cartesianas
+	//Calculamos la posici贸n de la luna en coordenadas cartesianas
 	float PosicionLunaX = distancia * cos(angulo * (PI / 180.0)) + distanciaObj * cos(anguloObj * (PI / 180.0) + angulo * (PI / 180.0));
 	float PosicionLunaZ = distancia * sin(angulo * (PI / 180.0)) + distanciaObj * sin(anguloObj * (PI / 180.0) + angulo * (PI / 180.0));
 
-	//Configuramos la matriz de proyecci髇 con la perspectiva y la matriz de vista con la posici髇 de la c醡ara y la luna
+	//Configuramos la matriz de proyecci贸n con la perspectiva y la matriz de vista con la posici贸n de la c谩mara y la luna
 	gluPerspective(45.0, (float)W_WIDTH / W_HEIGHT, 1.0, 2000.0f);
 	gluLookAt(distancia * cos(angulo * (PI / 180.0)), 0, -1 * distancia * sin(angulo * (PI / 180.0)),
 		PosicionLunaX, 0, -1 * PosicionLunaZ,
@@ -81,7 +81,7 @@ void myTeclado(unsigned char tras,int x,int y)
 	default:
 	break;
 	}
-// Se se modificou algo redeb鷛ase
+// Se se modificou algo redeb煤xase
   glutPostRedisplay();
 }
 
