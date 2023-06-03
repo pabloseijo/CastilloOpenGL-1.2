@@ -19,7 +19,7 @@ int W_HEIGHT = 500;		//Alto de la ventana
 //Milisegundos que tarda en redibujar
 #define MYTIEMPO 41
 
-// Ángulos de rotación para la cámara
+// Ãngulos de rotaciÃ³n para la cÃ¡mara
 static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
 
@@ -97,38 +97,6 @@ void myEjes() {
 	glVertex3f(.35f, .35, .35f);
 	glEnd();
 
-}
-
-//Lista del cuadrado
-int myCuadrado(int textura) {
-	int indice;
-
-	indice = glGenLists(1);
-
-	// CON TEXTURAS
-	glNewList(indice, GL_COMPILE);
-
-
-	// Aplicar la textura en el cuadrado
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, textura);
-
-	glBegin(GL_TRIANGLES);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f, 0.0f, -0.0f);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, 0.0f, -0.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -0.0f);
-
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -0.0f);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0f, 1.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 0.0f);
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
-
-
-	glEndList();
-
-	return indice;
 }
 
 //Lista del cono
@@ -242,104 +210,21 @@ int myRectangulo() {
 	return indice;
 }
 
-int myCubo(int textura)
-{
-	int indice;
-	indice = glGenLists(1);
-	glNewList(indice, GL_COMPILE);
-
-	// Aplicar la textura en el cubo
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, textura);
-
-	glBegin(GL_TRIANGLES);
-
-	// Cara frontal
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0, -1.0, 1.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0, -1.0, 1.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 1.0, 1.0);
-
-	glNormal3f(0.0f, 0.0f, -1.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 1.0, 1.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0, 1.0, 1.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0, -1.0, 1.0);
-
-	// Cara trasera
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0, -1.0, -1.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0, -1.0, -1.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0, 1.0, -1.0);
-
-	glNormal3f(0.0f, 0.0f, 1.0f);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0, 1.0, -1.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0, 1.0, -1.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0, -1.0, -1.0);
-
-	// Cara izquierda
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0, -1.0, -1.0);
-	glTexCoord2f(1.0f, 0.0f); glVertex3f(-1.0, -1.0, 1.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0, 1.0, 1.0);
-
-	glNormal3f(1.0f, 0.0f, 0.0f);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0, 1.0, 1.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0, 1.0, -1.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0, -1.0, -1.0);
-
-	// Cara derecha
-	glNormal3f(-1.0, 0.0, 0.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0, -1.0, 1.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0, -1.0, -1.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 1.0, -1.0);
-
-	glNormal3f(-1.0, 0.0, 0.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0, 1.0, -1.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0, 1.0, 1.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, -1.0, 1.0);
-
-	// Cara superior
-	glNormal3f(0.0, -1.0, 0.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.0, 1.0, 1.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(1.0, 1.0, 1.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0, 1.0, -1.0);
-
-	glNormal3f(0.0, -1.0, 0.0);
-	glTexCoord2f(0.0f, 0.0f); glVertex3f(1.0, 1.0, -1.0);
-	glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.0, 1.0, -1.0);
-	glTexCoord2f(1.0f, 1.0f); glVertex3f(-1.0, 1.0, 1.0);
-
-	// Cara inferior
-	glNormal3f(0.0, 1.0, 0.0);
-	glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0, -1.0);
-	glTexCoord2f(1.0, 0.0); glVertex3f(1.0, -1.0, -1.0);
-	glTexCoord2f(1.0, 1.0); glVertex3f(1.0, -1.0, 1.0);
-
-	glNormal3f(0.0, 1.0, 0.0);
-	glTexCoord2f(1.0, 1.0); glVertex3f(1.0, -1.0, 1.0);
-	glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, 1.0);
-	glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0, -1.0);
-
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
-
-	glEndList();
-
-	return indice;
-}
 //Funcion para dibujar el suelo
 void dibujaSuelo() {
 
-	for (int i = -1000; i <= 1000; i += sueloScale)
-		for (int j = -1000; j <= 1000; j += sueloScale) {
+	for (int i = -1500; i <= 1500; i += sueloScale)
+		for (int j = -1500; j <= 1500; j += sueloScale) {
 			glPushMatrix();
 			glRotatef(-90, 1, 0, 0);
 			glTranslatef(i, j, 0);
-			
+
 			glScalef(sueloScale, sueloScale, sueloScale);
+			glEnable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, hierba);
 			glCallList(cuadrado);
+			glDisable(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
 			glPopMatrix();
 		}
 }
@@ -489,6 +374,44 @@ void dibujaTorre() {
 	glPopMatrix();
 }
 
+void dibujaCastillo() {
+
+	//Muro Frontal 
+	glPushMatrix();
+		glTranslatef(0, 25, 0);
+		glScalef(100, 100, 100);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glCallList(rectangulo);
+	glPopMatrix();
+
+	//Torre frontal 1: paredes
+	glPushMatrix();
+		glTranslatef(0, 50, 0);
+		glScalef(25, 100, 25);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, muro);
+		glCallList(cilindro);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+	//Torre frontal 1: tejado
+	glPushMatrix();
+		glTranslatef(0, 180, 0);
+		glScalef(35, 35, 35);
+		//Lo roto para ponerlo de pie
+		glRotatef(90.0f, 1, 0, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, tejado);
+		glCallList(cono);
+		glDisable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+}
+
 void myMovimiento() {
 	Rot += 5.0f;
 	if (Rot > 360) Rot -= 360;
@@ -496,9 +419,6 @@ void myMovimiento() {
 	glutPostRedisplay(); //se vuelve a dibujar
 	glutTimerFunc(MYTIEMPO, myMovimiento, 0);//se vuelve a ejecutar myMovimiento
 }
-
-
-
 
 // Funcion de dibujo
 void myDisplay(void) {
@@ -512,16 +432,18 @@ void myDisplay(void) {
 	glMatrixMode(GL_MODELVIEW); //Matriz del Modelo
 	//glLoadIdentity(); // Inicializamos la matriz del modelo a la identidad
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	
+
 	skyBox();
 	dibujaSuelo();
 	glPushMatrix();
-	glTranslatef(0, 30, 0);
-	glPushMatrix();
-	dibujaMuros();
-	dibujaTorre();
+		glTranslatef(0, 30, 0);
+		glPushMatrix();
+			dibujaMuros();
+			dibujaTorre();
+			dibujaCastillo();
+		glPopMatrix();
 	glPopMatrix();
-	glPopMatrix();
+
 	myEjes();
 
 	glFlush();
@@ -570,7 +492,7 @@ void skyBox() {
 
 	glPushMatrix();
 
-	glScalef(1500, 1500, 1500);
+	glScalef(1200, 1200, 1200);
 	glTranslatef(0, 0, 0);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, cielo);
@@ -606,7 +528,7 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(myDisplay);
 	// Funcion de actualizacion
 	glutIdleFunc(Idle);
-	// Función de devolución de llamada para el cambio de tamaño de la ventana
+	// FunciÃ³n de devoluciÃ³n de llamada para el cambio de tamaÃ±o de la ventana
 	glutReshapeFunc(reshape);
 
 	//Habilito las texturas
