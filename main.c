@@ -1,18 +1,18 @@
 #include <windows.h>	//Inclusion de variables de windows
-
 #include <glut.h>	//Inclusion de GLUT mira que la tienes ahi
 #include <GL/gl.h>		//Inclusion de GL		 	
 #include <GL/glu.h>	
 #include <stdio.h>
 #include <math.h>	//Inclusion de librerias auxiliares	
-const int W_WIDTH = 500;	 //Ancho de la ventana
-const int W_HEIGHT = 500;		//Alto de la ventana
+#include "castillo.h"
+ int W_WIDTH = 500;	 //Ancho de la ventana
+ int W_HEIGHT = 500;		//Alto de la ventana
 
 #define GL_PI 3.14f
 //Milisegundos que tarda en redibujar
 #define MYTIEMPO 41
 
-// √Ångulos de rotaci√≥n para la c√°mara
+// ¡ngulos de rotaciÛn para la c·mara
 static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
 
@@ -24,10 +24,9 @@ int cuadrado = 0, cono = 0, cilindro = 0, rectangulo = 0;
 const int SLICES = 32;
 const int STACKS = 32;
 
-extern myCamara();
+void Idle();
+void reshape(int width, int height);
 
-extern void myTeclado(unsigned char tras,int x,int y);
-extern void myTeclasespeciales(int cursor,int x,int y) ;
 
 //Asigno la camara a cada caso
 void onMenu(int opcion) {
@@ -57,35 +56,35 @@ void myMenu(void) {
 }
 
 /* funcion que dibuja los ejes*/
-void myEjes () {
+void myEjes() {
 
-	glColor3f (0.0f,0.0f,1.0f);
+	glColor3f(0.0f, 0.0f, 1.0f);
 	glBegin(GL_LINES);
-	glVertex3f(0.0f,0.0f,0.0f);
-	glVertex3f(.75f,0.0f,0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(.75f, 0.0f, 0.0f);
 	glEnd();
 
-	
-	glColor3f (1.0f,0.0f,0.0f);
+
+	glColor3f(1.0f, 0.0f, 0.0f);
 	glBegin(GL_LINES);
-	glVertex3f(0.0f,0.0f,0.0f);
-	glVertex3f(0.0f,.75f,0.0f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.0f, .75f, 0.0f);
 	glEnd();
 
-	
-	glColor3f (0.0f,1.0f,0.0f);
+
+	glColor3f(0.0f, 1.0f, 0.0f);
 	glBegin(GL_LINES);
-	glVertex3f(0.0f,0.0f,0.0f);
-	glVertex3f(0.f,0.0f,.75f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(0.f, 0.0f, .75f);
 	glEnd();
 
 	//Diagonal
-	glColor3f (1.0f,1.0f,1.0f);
+	glColor3f(1.0f, 1.0f, 1.0f);
 	glBegin(GL_LINES);
-	glVertex3f(0.0f,0.0f,0.0f);
-	glVertex3f(.35f,.35,.35f);
+	glVertex3f(0.0f, 0.0f, 0.0f);
+	glVertex3f(.35f, .35, .35f);
 	glEnd();
-	
+
 }
 
 //Lista del cuadrado
@@ -220,17 +219,17 @@ void dibujaSuelo() {
 	for (int i = -500; i <= 500; i += sueloScale)
 		for (int j = -500; j <= 500; j += sueloScale) {
 			glPushMatrix();
-				glTranslatef(i, 0, j);
-				glScalef(sueloScale, sueloScale, sueloScale);
-				glRotatef(-90.0f, 1, 0, 0);
-				glCallList(cuadrado);
+			glTranslatef(i, 0, j);
+			glScalef(sueloScale, sueloScale, sueloScale);
+			glRotatef(-90.0f, 1, 0, 0);
+			glCallList(cuadrado);
 			glPopMatrix();
 		}
 
 	glPushMatrix();
-		glTranslatef(50, -25, 0);
-		glScalef(50, 50, 1);
-		glColor4f(1, 1, 1, 0.5);
+	glTranslatef(50, -25, 0);
+	glScalef(50, 50, 1);
+	glColor4f(1, 1, 1, 0.5);
 	glPopMatrix();
 
 }
@@ -239,39 +238,39 @@ void dibujaMuros() {
 	//Muro Frontal 
 	glPushMatrix();
 	glTranslatef(0, 0, 100);
-		glScalef(175, 50, 20);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glCallList(rectangulo);
+	glScalef(175, 50, 20);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glCallList(rectangulo);
 	glPopMatrix();
 
 	//Muro Lateral Izq
 	glPushMatrix();
-		glTranslatef(-100, 0, 0);
-		glRotatef(-90.0f, 0, 1, 0);
-		glScalef(175, 50, 20);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glCallList(rectangulo);
+	glTranslatef(-100, 0, 0);
+	glRotatef(-90.0f, 0, 1, 0);
+	glScalef(175, 50, 20);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glCallList(rectangulo);
 	glPopMatrix();
 
 	//Muro Lateral Dcho
 	glPushMatrix();
-		glTranslatef(100, 0, 0);
-		glRotatef(-90.0f, 0, 1, 0);
-		glScalef(175, 50, 20);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glCallList(rectangulo);
+	glTranslatef(100, 0, 0);
+	glRotatef(-90.0f, 0, 1, 0);
+	glScalef(175, 50, 20);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glCallList(rectangulo);
 	glPopMatrix();
 
 	//Muro Trasero 
 	glPushMatrix();
-		glTranslatef(0, 0, -100);
-		glScalef(175, 50, 20);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glCallList(rectangulo);
+	glTranslatef(0, 0, -100);
+	glScalef(175, 50, 20);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glCallList(rectangulo);
 	glPopMatrix();
 }
 
@@ -279,72 +278,72 @@ void dibujaTorre() {
 
 	//Torre frontal 1: paredes
 	glPushMatrix();
-		glTranslatef(100, -25, 100);
-		glScalef(25, 100, 25);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glCallList(cilindro);
+	glTranslatef(100, -25, 100);
+	glScalef(25, 100, 25);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glCallList(cilindro);
 	glPopMatrix();
 
 	//Torre frontal 1: tejado
 	glPushMatrix();
-		glTranslatef(100, 100, 100);
-		glScalef(35, 35, 35);
-		//Lo roto para ponerlo de pie
-		glRotatef(90.0f, 1, 0, 0);
-		glCallList(cono);
+	glTranslatef(100, 100, 100);
+	glScalef(35, 35, 35);
+	//Lo roto para ponerlo de pie
+	glRotatef(90.0f, 1, 0, 0);
+	glCallList(cono);
 	glPopMatrix();
 
 	//Torre frontal 2: paredes
 	glPushMatrix();
-		//traslado 200 en el eje x
-		glTranslatef(-100, -25, 100);
-		glScalef(25, 100, 25);
-		glRotatef(-90.0f, 1, 0, 0);
-		glCallList(cilindro);
+	//traslado 200 en el eje x
+	glTranslatef(-100, -25, 100);
+	glScalef(25, 100, 25);
+	glRotatef(-90.0f, 1, 0, 0);
+	glCallList(cilindro);
 	glPopMatrix();
 
 	//Torre frontal 2: tejado
 	glPushMatrix();
-		glTranslatef(-100, 100, 100);
-		glScalef(35, 35, 35);
-		//Lo roto para ponerlo de pie
-		glRotatef(90.0f, 1, 0, 0);
-		glCallList(cono);
+	glTranslatef(-100, 100, 100);
+	glScalef(35, 35, 35);
+	//Lo roto para ponerlo de pie
+	glRotatef(90.0f, 1, 0, 0);
+	glCallList(cono);
 	glPopMatrix();
 
 	//Torre trasera 1:paredes
 	glPushMatrix();
-		glTranslatef(100, -25, -100);
-		glScalef(25, 100, 25);
-		glRotatef(-90.0f, 1, 0, 0);
-		glCallList(cilindro);
+	glTranslatef(100, -25, -100);
+	glScalef(25, 100, 25);
+	glRotatef(-90.0f, 1, 0, 0);
+	glCallList(cilindro);
 	glPopMatrix();
 
 	//Torre trasera 1: tejado
 	glPushMatrix();
-		glTranslatef(100, 100, -100);
-		glScalef(35, 35, 35);
-		//Lo roto para ponerlo de pie
-		glRotatef(90.0f, 1, 0, 0);
-		glCallList(cono);
+	glTranslatef(100, 100, -100);
+	glScalef(35, 35, 35);
+	//Lo roto para ponerlo de pie
+	glRotatef(90.0f, 1, 0, 0);
+	glCallList(cono);
 	glPopMatrix();
 
 	//Torre trasera 2: paredes
 	glPushMatrix();
-		glTranslatef(-100, -25, -100);
-		glScalef(25, 100, 25);
-		glRotatef(-90.0f, 1, 0, 0);
-		glCallList(cilindro);
+	glTranslatef(-100, -25, -100);
+	glScalef(25, 100, 25);
+	glRotatef(-90.0f, 1, 0, 0);
+	glCallList(cilindro);
 	glPopMatrix();
 
 	//Torre trasera 2: tejado
 	glPushMatrix();
-		glTranslatef(-100, 100, -100);
-		glScalef(35, 35, 35);
-		//Lo roto para ponerlo de pie
-		glRotatef(90.0f, 1, 0, 0);
-		glCallList(cono);
+	glTranslatef(-100, 100, -100);
+	glScalef(35, 35, 35);
+	//Lo roto para ponerlo de pie
+	glRotatef(90.0f, 1, 0, 0);
+	glCallList(cono);
 	glPopMatrix();
 }
 
@@ -360,17 +359,9 @@ void myMovimiento() {
 void myDisplay(void) {
 	// Clear the window with current clearing color
 
-	//Colocamos la camara
-	switch (camara) {
 
-	case 1: //Sonda Voyayer
-		myCamara();
-		break;
+		myCamara(W_WIDTH, W_HEIGHT);
 
-	case 2: //Miramos al sol desde la tierra
-		myTelescopio(.5f, Rot, 0.0f, 0.0f);
-		break;
-	}
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -382,25 +373,27 @@ void myDisplay(void) {
 	dibujaTorre();
 	dibujaMuros();
 	myEjes();
-	glScalef(.5f, .5f,.5f);
-		
+	glScalef(.5f, .5f, .5f);
+
 	glFlush();
 	glutSwapBuffers();
 
 
 }
-int main(int argc, char **argv) {
+
+int main(int argc, char** argv) {
 
 	glutInit(&argc, argv);
-	
-	glutInitWindowPosition(0,0);  
-	glutInitWindowSize (W_WIDTH, W_HEIGHT);
-	glutInitDisplayMode (GLUT_RGBA | GLUT_DOUBLE |GLUT_DEPTH);
-	glutCreateWindow("Dibuja dos cuadrados, zbuffer y caras ocultas");
-	
-	glClearDepth( 1.0f );
-    glClearColor(0.0f,0.0f,0.0f,1.0f);
-			
+
+	glutInitWindowPosition(0, 0);
+	glutInitWindowSize(W_WIDTH, W_HEIGHT);
+	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+	glutCreateWindow("Castillo");
+
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
 	glEnable(GL_CULL_FACE); // Habilita la ocultacion de caras
 	glEnable(GL_NORMALIZE);
 
@@ -408,8 +401,12 @@ int main(int argc, char **argv) {
 	glutKeyboardFunc(myTeclado);
 	glutSpecialFunc(myTeclasespeciales);
 	glutDisplayFunc(myDisplay);
-	
-	myCamara();
+	// Funcion de actualizacion
+	glutIdleFunc(Idle);
+	// FunciÛn de devoluciÛn de llamada para el cambio de tamaÒo de la ventana
+	glutReshapeFunc(reshape);
+
+	myCamara(W_WIDTH, W_HEIGHT);
 	//myMovimiento();
 	myMenu();
 	cuadrado = myCuadrado();
@@ -420,4 +417,23 @@ int main(int argc, char **argv) {
 	// Empieza en bucle principal
 	glutMainLoop();
 	return 0;
+}
+
+void reshape(int width, int height) {
+	W_WIDTH = width;
+	W_HEIGHT = height;
+
+	// Ajusta la vista a las dimensiones de la ventana
+	glViewport(0, 0, width, height);
+
+	// Reinicia el sistema de coordenadas
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	// Establece el volumen de trabajo
+	gluPerspective(45.0f, (GLdouble)width / height, 1.0f, 500.0f);
+}
+
+void Idle() {
+	glutPostRedisplay();
 }
