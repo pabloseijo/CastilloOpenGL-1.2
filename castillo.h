@@ -2,7 +2,7 @@
 #define CASTILLO_H
 
 #define INCREMENTO .01
-#define DISTANCIA 1000
+#define DISTANCIA 750
 #define PI 3.1416
 //Milisegundos que tarda en redibujar
 #define MYTIEMPO 41

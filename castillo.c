@@ -39,10 +39,10 @@ void myCamara(int ancho, int alto) {
 	glLoadIdentity();
 	//Se pone una proyeccion ortografica, especificando que se verá desde -200 a la izquierda hasta 200 a la derecha, desde -200 hacia abajo hasta 200 hacia arriba y desde 1 como muy cerca hasta 2000 a lo lejos
 	//glOrtho(-200.0,200.0f,-200.0,200.0f,1.0,2000.0f);
-	gluPerspective(40.f, (float)ancho / (float)alto, 1.0, 2000);
+	gluPerspective(45.f, (float)ancho / (float)alto, 1.0, 3000);
 	//La camara se coloca segunlos valores de alpha y beta, a 1000 de distancia, cambiando al pulsar las flechas, mirando hacia el centro con la camara orientada sobre el eje Y
 
-	gluLookAt(((float)DISTANCIA * (float)sin(alpha) * cos(beta)), ((float)DISTANCIA * (float)sin(beta)), ((float)DISTANCIA * cos(alpha) * cos(beta)), 0, 0, 0, 0, 1, 0);
+	gluLookAt(((float)DISTANCIA * (float)sin(alpha) * cos(beta)), ((float)DISTANCIA * (float)sin(beta)) + 100, ((float)DISTANCIA * cos(alpha) * cos(beta)), 0, 10, 0, 0, 1, 0);
 
 }
 
