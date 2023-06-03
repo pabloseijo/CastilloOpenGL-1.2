@@ -40,6 +40,24 @@ int hierba = 0, tejado = 0, muro = 0, cielo = 0;
 
 int flag = 0;
 
+void myLuces() {
+	// Luz natural (sol)
+	GLfloat Ambient_0[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
+	GLfloat Diffuse_0[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat Specular_0[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat LuzPos_0[4] = { 40.0f, 40.0f, 100.0f, 1.0f };
+
+	glEnable(GL_NORMALIZE);
+	glShadeModel(GL_SMOOTH);
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, Ambient_0);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, Diffuse_0);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, Specular_0);
+	glLightfv(GL_LIGHT0, GL_POSITION, LuzPos_0);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+}
 //Asigno la camara a cada caso
 void onMenu(int opcion) {
 	//En funcion de la opcion selecciono la camara que quiero
@@ -539,6 +557,8 @@ int main(int argc, char** argv) {
 	tejado = myTexturas("roof.jpg");
 	muro = myTexturas("muro.jpg");
 	cielo = myTexturas("cielo.jpg");
+
+	myLuces();
 
 	//myMovimiento();
 	myMenu();
