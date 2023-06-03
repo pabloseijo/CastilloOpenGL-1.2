@@ -5,14 +5,20 @@
 #include <stdio.h>
 #include <math.h>	//Inclusion de librerias auxiliares	
 #include "castillo.h"
- int W_WIDTH = 500;	 //Ancho de la ventana
- int W_HEIGHT = 500;		//Alto de la ventana
+
+
+//Para la texturizacion
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+int W_WIDTH = 500;	 //Ancho de la ventana
+int W_HEIGHT = 500;		//Alto de la ventana
 
 #define GL_PI 3.14f
 //Milisegundos que tarda en redibujar
 #define MYTIEMPO 41
 
-// Ángulos de rotación para la cámara
+// Ãngulos de rotaciÃ³n para la cÃ¡mara
 static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
 
@@ -27,6 +33,8 @@ const int STACKS = 32;
 void Idle();
 void reshape(int width, int height);
 
+//Texturas paisaje
+int hierba = 0, tejado = 0;
 
 //Asigno la camara a cada caso
 void onMenu(int opcion) {
@@ -215,21 +223,22 @@ int myRectangulo() {
 //Funcion para dibujar el suelo
 void dibujaSuelo() {
 
-	glColor3f(1, 1, 0);
+	glColor3f(1, 0, 0);
 	for (int i = -500; i <= 500; i += sueloScale)
 		for (int j = -500; j <= 500; j += sueloScale) {
 			glPushMatrix();
-			glTranslatef(i, 0, j);
-			glScalef(sueloScale, sueloScale, sueloScale);
-			glRotatef(-90.0f, 1, 0, 0);
-			glCallList(cuadrado);
+				glTranslatef(i, 0, j);
+				glScalef(sueloScale, sueloScale, sueloScale);
+				glRotatef(-90.0f, 1, 0, 0);
+				glBindTexture(GL_TEXTURE_2D, hierba);
+				glCallList(cuadrado);
 			glPopMatrix();
 		}
 
 	glPushMatrix();
-	glTranslatef(50, -25, 0);
-	glScalef(50, 50, 1);
-	glColor4f(1, 1, 1, 0.5);
+		glTranslatef(50, -25, 0);
+		glScalef(50, 50, 1);
+		glColor4f(1, 1, 1, 0.5);
 	glPopMatrix();
 
 }
@@ -291,6 +300,7 @@ void dibujaTorre() {
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
+	glBindTexture(GL_TEXTURE_2D, tejado);
 	glCallList(cono);
 	glPopMatrix();
 
@@ -309,6 +319,7 @@ void dibujaTorre() {
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
+	glBindTexture(GL_TEXTURE_2D, tejado);
 	glCallList(cono);
 	glPopMatrix();
 
@@ -326,6 +337,7 @@ void dibujaTorre() {
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
+	glBindTexture(GL_TEXTURE_2D, tejado);
 	glCallList(cono);
 	glPopMatrix();
 
@@ -343,6 +355,7 @@ void dibujaTorre() {
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
+	glBindTexture(GL_TEXTURE_2D, tejado);
 	glCallList(cono);
 	glPopMatrix();
 }
@@ -360,7 +373,7 @@ void myDisplay(void) {
 	// Clear the window with current clearing color
 
 
-		myCamara(W_WIDTH, W_HEIGHT);
+	myCamara(W_WIDTH, W_HEIGHT);
 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -378,6 +391,39 @@ void myDisplay(void) {
 	glFlush();
 	glutSwapBuffers();
 
+
+}
+
+int myTexturas(char* nombre) {
+
+	GLint textura;
+
+	//load and create a texture
+	glGenTextures(1, &textura);
+	glBindTexture(GL_TEXTURE_2D, textura);
+
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	int width, height, nrChannels;
+
+	unsigned char* data = stbi_load(nombre, &width, &height, &nrChannels, 0);
+
+	if (data) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+	}
+	else { printf("algo ha fallado"); }
+
+	stbi_image_free(data);
+
+	printf("%d", textura);
+	return textura;
 
 }
 
@@ -403,8 +449,16 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(myDisplay);
 	// Funcion de actualizacion
 	glutIdleFunc(Idle);
-	// Función de devolución de llamada para el cambio de tamaño de la ventana
+	// FunciÃ³n de devoluciÃ³n de llamada para el cambio de tamaÃ±o de la ventana
 	glutReshapeFunc(reshape);
+
+	//Habilito las texturas
+	glEnable(GL_TEXTURE_2D);
+	glShadeModel(GL_SMOOTH);
+	glEnable(GL_ALPHA_TEST);
+
+	hierba = myTexturas("hierba.jpg");
+	tejado = myTexturas("roof.jpg");
 
 	myCamara(W_WIDTH, W_HEIGHT);
 	//myMovimiento();
