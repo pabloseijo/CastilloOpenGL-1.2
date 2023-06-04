@@ -19,19 +19,25 @@ int W_HEIGHT = 500;		//Alto de la ventana
 //Milisegundos que tarda en redibujar
 #define MYTIEMPO 41
 
-// 羘gulos de rotaci髇 para la c醡ara
+// 脕ngulos de rotaci贸n para la c谩mara
 static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
 
 int agua[16];
 int agua_indice = 0;
 
+// Definir el color gris claro de la niebla
+GLfloat gray[] = { 0.7, 0.7, 0.7, 1.0 };
+// Configurar la posici贸n de la niebla
+GLfloat fog_start = 800.0;
+GLfloat fog_end = 1000.0;
+
 float Rot = 0;
 camara = 0;
 sueloScale = 50;
-int cuadrado = 0, cono = 0, cilindro = 0, rectangulo = 0, cubo = 0, esfera = 0, piramide;
+int cuadrado = 0, cono = 0, cilindro = 0, rectangulo = 0, cubo = 0, esfera = 0, soldado = 0;
 
-int valorCutOff = 33;
+int valorCutOff = 179;
 
 const int SLICES = 32;
 const int STACKS = 32;
@@ -41,7 +47,7 @@ void reshape(int width, int height);
 void skyBox();
 
 //Texturas paisaje
-int hierba = 0, tejado = 0, muro = 0, cielo = 0, tejadoCasa[5], muroCasa[5];
+int hierba = 0, tejado = 0, muro = 0, cielo = 0, tejadoCasa[5], muroCasa[5], tronco = 0, hojas = 0, armadura = 0, cara = 0;
 
 int flag = 0;
 
@@ -49,8 +55,8 @@ int flag = 0;
 GLfloat ambient_1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat diffuse_1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat specular_1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-GLfloat luzPos_1[4] = { 0.0f, 0.0f, 30.0f, 1.0f };
-GLfloat spotDir_1[3] = { 0.0f, 0.0f, -1.0f };
+GLfloat luzPos_1[4] = { 1000.0f, 1000.0f, 0.0f, 1.0f };
+GLfloat spotDir_1[3] = { -1.0f, -1.0f, -1.0f };
 GLfloat specRef_1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 
@@ -226,6 +232,38 @@ int myRectangulo() {
 	return indice;
 }
 
+void dibujaSoldado(int posicion_x, int posicion_z) {
+	//Tronco
+	glPushMatrix();
+		glTranslatef(posicion_x, -25, posicion_z);
+		glScalef(5, 25, 5);
+	//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, armadura);
+		glCallList(cilindro);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+	//Torre frontal 1: tejado
+	glPushMatrix();
+		glTranslatef(posicion_x, 5, posicion_z);
+		glScalef(10, 10, 10);
+		//
+		glRotatef(-45.0f, 0, 1, 0);
+		//Lo roto para ponerlo de pie
+		glRotatef(90.0f, 1, 0, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, cara);
+		glCallList(esfera);
+		glDisable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+
+}
+
 //Funcion para dibujar el suelo
 void dibujaSuelo() {
 
@@ -249,7 +287,7 @@ void dibujaMuros() {
 	//Muro Frontal 
 	glPushMatrix();
 	glTranslatef(0, 0, 100);
-	glScalef(175, 50, 20);
+	glScalef(175, 100, 20);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
 	glCallList(rectangulo);
@@ -259,7 +297,7 @@ void dibujaMuros() {
 	glPushMatrix();
 	glTranslatef(-100, 0, 0);
 	glRotatef(-90.0f, 0, 1, 0);
-	glScalef(175, 50, 20);
+	glScalef(175, 100, 20);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
 	glCallList(rectangulo);
@@ -269,7 +307,7 @@ void dibujaMuros() {
 	glPushMatrix();
 	glTranslatef(100, 0, 0);
 	glRotatef(-90.0f, 0, 1, 0);
-	glScalef(175, 50, 20);
+	glScalef(175, 100, 20);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
 	glCallList(rectangulo);
@@ -278,7 +316,7 @@ void dibujaMuros() {
 	//Muro Trasero 
 	glPushMatrix();
 	glTranslatef(0, 0, -100);
-	glScalef(175, 50, 20);
+	glScalef(175, 100, 20);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
 	glCallList(rectangulo);
@@ -290,7 +328,7 @@ void dibujaTorre() {
 	//Torre frontal 1: paredes
 	glPushMatrix();
 	glTranslatef(100, -25, 100);
-	glScalef(25, 100, 25);
+	glScalef(25, 150, 25);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
 	glEnable(GL_TEXTURE_2D);
@@ -302,7 +340,7 @@ void dibujaTorre() {
 
 	//Torre frontal 1: tejado
 	glPushMatrix();
-	glTranslatef(100, 100, 100);
+	glTranslatef(100, 150, 100);
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -317,7 +355,7 @@ void dibujaTorre() {
 	glPushMatrix();
 	//traslado 200 en el eje x
 	glTranslatef(-100, -25, 100);
-	glScalef(25, 100, 25);
+	glScalef(25, 150, 25);
 	glRotatef(-90.0f, 1, 0, 0);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, muro);
@@ -328,7 +366,7 @@ void dibujaTorre() {
 
 	//Torre frontal 2: tejado
 	glPushMatrix();
-	glTranslatef(-100, 100, 100);
+	glTranslatef(-100, 150, 100);
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -342,7 +380,7 @@ void dibujaTorre() {
 	//Torre trasera 1:paredes
 	glPushMatrix();
 	glTranslatef(100, -25, -100);
-	glScalef(25, 100, 25);
+	glScalef(25, 150, 25);
 	glRotatef(-90.0f, 1, 0, 0);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, muro);
@@ -353,7 +391,7 @@ void dibujaTorre() {
 
 	//Torre trasera 1: tejado
 	glPushMatrix();
-	glTranslatef(100, 100, -100);
+	glTranslatef(100, 150, -100);
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -367,7 +405,7 @@ void dibujaTorre() {
 	//Torre trasera 2: paredes
 	glPushMatrix();
 	glTranslatef(-100, -25, -100);
-	glScalef(25, 100, 25);
+	glScalef(25, 150, 25);
 	glRotatef(-90.0f, 1, 0, 0);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, muro);
@@ -378,7 +416,7 @@ void dibujaTorre() {
 
 	//Torre trasera 2: tejado
 	glPushMatrix();
-	glTranslatef(-100, 100, -100);
+	glTranslatef(-100, 150, -100);
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -394,41 +432,39 @@ void dibujaCastillo() {
 
 	//Muro Frontal 
 	glPushMatrix();
-		glTranslatef(0, 25, 0);
-		glScalef(100, 100, 100);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glCallList(rectangulo);
+	glTranslatef(0, 25, 0);
+	glScalef(100, 150, 100);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glCallList(rectangulo);
 	glPopMatrix();
 
 	//Torre frontal 1: paredes
 	glPushMatrix();
-		glTranslatef(0, 50, 0);
-		glScalef(25, 100, 25);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, muro);
-		glCallList(cilindro);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glTranslatef(0, 50, 0);
+	glScalef(25, 150, 25);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, muro);
+	glCallList(cilindro);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 
 	//Torre frontal 1: tejado
 	glPushMatrix();
-		glTranslatef(0, 180, 0);
-		glScalef(35, 35, 35);
-		glLightfv(GL_LIGHT1, GL_POSITION, luzPos_1);
-		//Lo roto para ponerlo de pie
-		glRotatef(90.0f, 1, 0, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, tejado);
-		glCallList(cono);
-		glDisable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glTranslatef(0, 230, 0);
+	glScalef(35, 35, 35);
+	//Lo roto para ponerlo de pie
+	glRotatef(90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, tejado);
+	glCallList(cono);
+	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 
-	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, valorCutOff);
 }
 
 void dibujaCasa(int posicion_x, int posicion_z, int muro, int tejado) {
@@ -460,6 +496,36 @@ void dibujaCasa(int posicion_x, int posicion_z, int muro, int tejado) {
 	glPopMatrix();
 }
 
+void dibujaArbol(int posicion_x, int posicion_z) {
+
+	//Tronco
+	glPushMatrix();
+	glTranslatef(posicion_x, -25, posicion_z);
+	glScalef(5, 50, 5);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, tronco);
+	glCallList(cilindro);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+	//Torre frontal 1: tejado
+	glPushMatrix();
+	glTranslatef(posicion_x, 40, posicion_z);
+	glScalef(20, 20, 20);
+	//Lo roto para ponerlo de pie
+	glRotatef(90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, hojas);
+	glCallList(esfera);
+	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+}
+
 void myMovimiento() {
 	Rot += 5.0f;
 	if (Rot > 360) Rot -= 360;
@@ -481,21 +547,57 @@ void myDisplay(void) {
 	//glLoadIdentity(); // Inicializamos la matriz del modelo a la identidad
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	// Habilitar la niebla
+	glEnable(GL_FOG);
+
+	// Configurar los par谩metros de niebla
+	glFogi(GL_FOG_MODE, GL_LINEAR);
+	glFogfv(GL_FOG_COLOR, gray);
+
+	glFogf(GL_FOG_START, fog_start);
+	glFogf(GL_FOG_END, fog_end);
+
+	// Configurar la densidad de la niebla
+	GLfloat fog_density = 0.5;
+	glFogf(GL_FOG_DENSITY, fog_density);
+
+	glDisable(GL_LIGHTING);
 	skyBox();
+	glEnable(GL_LIGHTING);
 	dibujaSuelo();
 	srand(33);
-	
+
 	glPushMatrix();
-		glTranslatef(0, 30, 0);
-		glPushMatrix();
-			dibujaMuros();
-			dibujaTorre();
-			dibujaCastillo();
-			for (int i = 0; i < 5; i++) {
-				dibujaCasa(-300 + (-100 * i), 200, i, i);
-			}
-			
-		glPopMatrix();
+	glTranslatef(0, 30, 0);
+	glPushMatrix();
+	//Dibujamos las murallas
+	dibujaMuros();
+	dibujaTorre();
+
+	//dibujamos el castillo
+	dibujaCastillo();
+
+	dibujaCasa(-300,  -200, 0, 0);
+	dibujaCasa(-450 , -300, 1, 1);
+	dibujaCasa(-200, 168, 2, 2);
+	dibujaCasa(-500, 134, 3, 3);
+	dibujaCasa(-245, 398, 4, 4);
+
+	for (int i = 0; i < 100; i++) {
+		int randomX = rand() % 1000 + 300;
+		int randomZ = rand() % 1000 + 300;
+
+		dibujaArbol(randomX, randomZ);
+	}
+
+	for (int i = 0; i < 200; i++) {
+		int randomX = rand() % 1000 + 300;
+		int randomZ = rand() % 1000 - 1300;
+
+		dibujaSoldado(randomX, randomZ);
+	}
+
+	glPopMatrix();
 	glPopMatrix();
 	dibujaAgua();
 	myEjes();
@@ -583,17 +685,19 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(myDisplay);
 	// Funcion de actualizacion
 	glutIdleFunc(Idle);
-	// Funci髇 de devoluci髇 de llamada para el cambio de tama駉 de la ventana
+	// Funci贸n de devoluci贸n de llamada para el cambio de tama帽o de la ventana
 	glutReshapeFunc(reshape);
 
 	//Habilito las texturas
 	// glShadeModel(GL_SMOOTH);
 
+	//General
 	hierba = myCargarTexturas("hierba.jpg");
 	tejado = myCargarTexturas("roof.jpg");
 	muro = myCargarTexturas("muro.jpg");
 	cielo = myCargarTexturas("cielo.jpg");
 
+	//Casas
 	muroCasa[0] = myCargarTexturas("muroCasa0.jpg");
 	tejadoCasa[0] = myCargarTexturas("tejadoCasa0.jpg");
 	muroCasa[1] = myCargarTexturas("muroCasa1.jpg");
@@ -604,6 +708,7 @@ int main(int argc, char** argv) {
 	tejadoCasa[3] = myCargarTexturas("tejadoCasa3.jpg");
 	muroCasa[4] = myCargarTexturas("muroCasa4.jpg");
 	tejadoCasa[4] = myCargarTexturas("tejadoCasa4.jpg");
+
 	// lago
 	agua[0] = myCargarTexturas("caust00.png");
 	agua[1] = myCargarTexturas("caust01.png");
@@ -621,6 +726,19 @@ int main(int argc, char** argv) {
 	agua[13] = myCargarTexturas("caust12.png");
 	agua[14] = myCargarTexturas("caust14.png");
 	agua[15] = myCargarTexturas("caust15.png");
+
+	//Arboles
+	tronco = myCargarTexturas("tronco.jpg");
+	hojas = myCargarTexturas("hojas.png");
+
+	//soldados
+	armadura = myCargarTexturas("armadura.jpg");
+	cara = myCargarTexturas("face.png");
+
+	//Luces
+	//Sol
+	glLightfv(GL_LIGHT1, GL_POSITION, luzPos_1);
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, valorCutOff);
 
 	//myMovimiento();
 	moverAgua();
