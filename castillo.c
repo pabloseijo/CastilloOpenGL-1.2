@@ -16,7 +16,7 @@ float beta = 0;
 
 //void myCamara(GLint W, GLint H) {
 //		
-//	//Configuraci√≥n de la matriz de proyeccion
+//	//ConfiguraciÛn de la matriz de proyeccion
 //	glMatrixMode(GL_PROJECTION);
 //	//La ponemos auno
 //	glLoadIdentity();
@@ -33,11 +33,11 @@ float beta = 0;
 
 void myCamara(int ancho, int alto) {
 
-	//Configuraci√≥n de la matriz de proyeccion
+	//ConfiguraciÛn de la matriz de proyeccion
 	glMatrixMode(GL_PROJECTION);
 	//La ponemos a uno
 	glLoadIdentity();
-	//Se pone una proyeccion ortografica, especificando que se ver√° desde -200 a la izquierda hasta 200 a la derecha, desde -200 hacia abajo hasta 200 hacia arriba y desde 1 como muy cerca hasta 2000 a lo lejos
+	//Se pone una proyeccion ortografica, especificando que se ver· desde -200 a la izquierda hasta 200 a la derecha, desde -200 hacia abajo hasta 200 hacia arriba y desde 1 como muy cerca hasta 2000 a lo lejos
 	//glOrtho(-200.0,200.0f,-200.0,200.0f,1.0,2000.0f);
 	gluPerspective(45.f, (float)ancho / (float)alto, 1.0, 2500);
 	//La camara se coloca segunlos valores de alpha y beta, a 1000 de distancia, cambiando al pulsar las flechas, mirando hacia el centro con la camara orientada sobre el eje Y
@@ -61,17 +61,17 @@ void myTelescopio(float distancia, float angulo, float distanciaObj, float angul
 
 void myTelescopioSatelite(float distancia, float angulo, float distanciaObj, float anguloObj) {
 
-	//Configuraci√≥n de la matriz de proyecci√≥n
+	//ConfiguraciÛn de la matriz de proyecciÛn
 	glMatrixMode(GL_PROJECTION);
 
 	//La ponemos a uno
 	glLoadIdentity();
 
-	//Calculamos la posici√≥n de la luna en coordenadas cartesianas
+	//Calculamos la posiciÛn de la luna en coordenadas cartesianas
 	float PosicionLunaX = distancia * cos(angulo * (PI / 180.0)) + distanciaObj * cos(anguloObj * (PI / 180.0) + angulo * (PI / 180.0));
 	float PosicionLunaZ = distancia * sin(angulo * (PI / 180.0)) + distanciaObj * sin(anguloObj * (PI / 180.0) + angulo * (PI / 180.0));
 
-	//Configuramos la matriz de proyecci√≥n con la perspectiva y la matriz de vista con la posici√≥n de la c√°mara y la luna
+	//Configuramos la matriz de proyecciÛn con la perspectiva y la matriz de vista con la posiciÛn de la c·mara y la luna
 	gluPerspective(45.0, (float)W_WIDTH / W_HEIGHT, 1.0, 2000.0f);
 	gluLookAt(distancia * cos(angulo * (PI / 180.0)), 0, -1 * distancia * sin(angulo * (PI / 180.0)),
 		PosicionLunaX, 0, -1 * PosicionLunaZ,
@@ -91,11 +91,27 @@ void myTeclado(unsigned char tras, int x, int y)
 	case 'p':
 
 		break;
+	case 'o':
+		glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHT1);
+		break;
+	case 'i':
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		glEnable(GL_LIGHT1);
+		break;
+	case 'z':
+		valorCutOff++;
+		break;
+	case 'x':
+		valorCutOff--;
+		break;
 
 	default:
 		break;
 	}
-	// Se se modificou algo redeb√∫xase
+	// Se se modificou algo redeb˙xase
 	glutPostRedisplay();
 }
 
@@ -146,4 +162,75 @@ void myTeclasespeciales(int cursor, int x, int y)
 
 
 	glutPostRedisplay();
+}
+
+void moverAgua() {
+	agua_indice++;
+	if (agua_indice == 15)
+		agua_indice = 0;
+	glutPostRedisplay();
+	glutTimerFunc(300, moverAgua, 0); // aumentar el tiempo a 300 ms
+}
+
+void dibujaAgua() {
+
+	glPushMatrix();
+
+	glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
+	/*printf("Agua = %d", agua_indice);*/
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBindTexture(GL_TEXTURE_2D, agua[agua_indice]);
+
+	glRotatef(-90, 1, 0, 0);
+	glTranslatef(200, -250, 8);
+	glScalef(200, 200, 1);
+	glBegin(GL_TRIANGLES);
+
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f, 0.0f, -0.0f);
+	glTexCoord2f(1.0f, 0.0f); glVertex3f(1.0f, 0.0f, -0.0f);
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -0.0f);
+
+	glTexCoord2f(1.0f, 1.0f); glVertex3f(1.0f, 1.0f, -0.0f);
+	glTexCoord2f(0.0f, 1.0f); glVertex3f(0.0f, 1.0f, 0.0f);
+	glTexCoord2f(0.0f, 0.0f); glVertex3f(0.0f, 0.0f, 0.0f);
+
+	glEnd();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
+
+	glPopMatrix();
+}
+
+void myIluminacion() {
+	// primera luz
+	GLfloat ambient_0[4] = { 0.5f, 0.5f,0.5f, 1.0f };
+	GLfloat diffuse_0[4] = { 0.3f, 0.3f,0.3f, 1.0f };
+	GLfloat specular_0[4] = { 0.0f, 0.0f,0.0f, 1.0f };
+	GLfloat luzPos_0[4] = { 0.0f, 0.0f,100.0f, 1.0f };
+
+	glEnable(GL_NORMALIZE);
+	// definimos la luz GL_LIGHT0
+	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient_0);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse_0);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, specular_0);
+	glLightfv(GL_LIGHT0, GL_POSITION, luzPos_0);
+
+
+	// definimos la luz GL_LIGHT1
+	glLightfv(GL_LIGHT1, GL_AMBIENT, ambient_1);
+	glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse_1);
+	glLightfv(GL_LIGHT1, GL_SPECULAR, specular_1);
+	glLightfv(GL_LIGHT1, GL_POSITION, luzPos_1);
+	glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotDir_1);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+
+	printf("Hola");
 }

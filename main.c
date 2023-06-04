@@ -19,14 +19,19 @@ int W_HEIGHT = 500;		//Alto de la ventana
 //Milisegundos que tarda en redibujar
 #define MYTIEMPO 41
 
-// Ãngulos de rotaciÃ³n para la cÃ¡mara
+// Ángulos de rotación para la cámara
 static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
+
+int agua[16];
+int agua_indice = 0;
 
 float Rot = 0;
 camara = 0;
 sueloScale = 50;
-int cuadrado = 0, cono = 0, cilindro = 0, rectangulo = 0, cubo = 0, esfera = 0;
+int cuadrado = 0, cono = 0, cilindro = 0, rectangulo = 0, cubo = 0, esfera = 0, piramide;
+
+int valorCutOff = 33;
 
 const int SLICES = 32;
 const int STACKS = 32;
@@ -36,28 +41,19 @@ void reshape(int width, int height);
 void skyBox();
 
 //Texturas paisaje
-int hierba = 0, tejado = 0, muro = 0, cielo = 0;
+int hierba = 0, tejado = 0, muro = 0, cielo = 0, tejadoCasa[5], muroCasa[5];
 
 int flag = 0;
 
-void myLuces() {
-	// Luz natural (sol)
-	GLfloat Ambient_0[4] = { 0.7f, 0.7f, 0.7f, 1.0f };
-	GLfloat Diffuse_0[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat Specular_0[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	GLfloat LuzPos_0[4] = { 40.0f, 40.0f, 100.0f, 1.0f };
+// GL_LIGHT1
+GLfloat ambient_1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat diffuse_1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat specular_1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat luzPos_1[4] = { 0.0f, 0.0f, 30.0f, 1.0f };
+GLfloat spotDir_1[3] = { 0.0f, 0.0f, -1.0f };
+GLfloat specRef_1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	glEnable(GL_NORMALIZE);
-	glShadeModel(GL_SMOOTH);
 
-	glLightfv(GL_LIGHT0, GL_AMBIENT, Ambient_0);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, Diffuse_0);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, Specular_0);
-	glLightfv(GL_LIGHT0, GL_POSITION, LuzPos_0);
-
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-}
 //Asigno la camara a cada caso
 void onMenu(int opcion) {
 	//En funcion de la opcion selecciono la camara que quiero
@@ -137,6 +133,8 @@ int myCono() {
 	glEndList();
 	return indice;
 }
+
+// Lista piramide
 
 //Lista del Cilindro
 int myCilindro() {
@@ -420,6 +418,7 @@ void dibujaCastillo() {
 	glPushMatrix();
 		glTranslatef(0, 180, 0);
 		glScalef(35, 35, 35);
+		glLightfv(GL_LIGHT1, GL_POSITION, luzPos_1);
 		//Lo roto para ponerlo de pie
 		glRotatef(90.0f, 1, 0, 0);
 		glEnable(GL_TEXTURE_2D);
@@ -427,6 +426,37 @@ void dibujaCastillo() {
 		glCallList(cono);
 		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+	glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, valorCutOff);
+}
+
+void dibujaCasa(int posicion_x, int posicion_z, int muro, int tejado) {
+
+	//Torre frontal 1: paredes
+	glPushMatrix();
+	glTranslatef(posicion_x, -25, posicion_z);
+	glScalef(35, 50, 35);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, muroCasa[muro]);
+	glCallList(cilindro);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+	//Torre frontal 1: tejado
+	glPushMatrix();
+	glTranslatef(posicion_x, 60, posicion_z);
+	glScalef(45, 45, 45);
+	//Lo roto para ponerlo de pie
+	glRotatef(90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, tejadoCasa[tejado]);
+	glCallList(cono);
+	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 }
 
@@ -453,15 +483,21 @@ void myDisplay(void) {
 
 	skyBox();
 	dibujaSuelo();
+	srand(33);
+	
 	glPushMatrix();
 		glTranslatef(0, 30, 0);
 		glPushMatrix();
 			dibujaMuros();
 			dibujaTorre();
 			dibujaCastillo();
+			for (int i = 0; i < 5; i++) {
+				dibujaCasa(-300 + (-100 * i), 200, i, i);
+			}
+			
 		glPopMatrix();
 	glPopMatrix();
-
+	dibujaAgua();
 	myEjes();
 
 	glFlush();
@@ -470,15 +506,13 @@ void myDisplay(void) {
 
 }
 
-int myTexturas(char* nombre) {
+int myCargarTexturas(char* name) {
+	int textura;
 
-	GLint textura;
-
-	//load and create a texture
 	glGenTextures(1, &textura);
 	glBindTexture(GL_TEXTURE_2D, textura);
 
-	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	// glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -488,20 +522,23 @@ int myTexturas(char* nombre) {
 
 	int width, height, nrChannels;
 
-	unsigned char* data = stbi_load(nombre, &width, &height, &nrChannels, 0);
+	unsigned char* data = stbi_load(name, &width, &height, &nrChannels, 0);
 
 	if (data) {
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+		if (nrChannels == 3) { // hierba
+			//gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, width, height, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		}
+		else if (nrChannels == 4) { // agua, tiene 4 por canal alpha
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		}
 	}
-	else { printf("algo ha fallado"); }
 
 	stbi_image_free(data);
 
-	printf("%d", textura);
 	return textura;
-
 }
+
 
 void skyBox() {
 	glDisable(GL_DEPTH_TEST);
@@ -546,22 +583,50 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(myDisplay);
 	// Funcion de actualizacion
 	glutIdleFunc(Idle);
-	// FunciÃ³n de devoluciÃ³n de llamada para el cambio de tamaÃ±o de la ventana
+	// Función de devolución de llamada para el cambio de tamaño de la ventana
 	glutReshapeFunc(reshape);
 
 	//Habilito las texturas
-	//glShadeModel(GL_SMOOTH);
-	//glEnable(GL_ALPHA_TEST);
+	// glShadeModel(GL_SMOOTH);
 
-	hierba = myTexturas("hierba.jpg");
-	tejado = myTexturas("roof.jpg");
-	muro = myTexturas("muro.jpg");
-	cielo = myTexturas("cielo.jpg");
+	hierba = myCargarTexturas("hierba.jpg");
+	tejado = myCargarTexturas("roof.jpg");
+	muro = myCargarTexturas("muro.jpg");
+	cielo = myCargarTexturas("cielo.jpg");
 
-	myLuces();
+	muroCasa[0] = myCargarTexturas("muroCasa0.jpg");
+	tejadoCasa[0] = myCargarTexturas("tejadoCasa0.jpg");
+	muroCasa[1] = myCargarTexturas("muroCasa1.jpg");
+	tejadoCasa[1] = myCargarTexturas("tejadoCasa1.jpg");
+	muroCasa[2] = myCargarTexturas("muroCasa2.jpg");
+	tejadoCasa[2] = myCargarTexturas("tejadoCasa2.jpg");
+	muroCasa[3] = myCargarTexturas("muroCasa3.jpg");
+	tejadoCasa[3] = myCargarTexturas("tejadoCasa3.jpg");
+	muroCasa[4] = myCargarTexturas("muroCasa4.jpg");
+	tejadoCasa[4] = myCargarTexturas("tejadoCasa4.jpg");
+	// lago
+	agua[0] = myCargarTexturas("caust00.png");
+	agua[1] = myCargarTexturas("caust01.png");
+	agua[2] = myCargarTexturas("caust02.png");
+	agua[3] = myCargarTexturas("caust03.png");
+	agua[4] = myCargarTexturas("caust04.png");
+	agua[5] = myCargarTexturas("caust05.png");
+	agua[6] = myCargarTexturas("caust06.png");
+	agua[7] = myCargarTexturas("caust07.png");
+	agua[8] = myCargarTexturas("caust08.png");
+	agua[9] = myCargarTexturas("caust09.png");
+	agua[10] = myCargarTexturas("caust10.png");
+	agua[11] = myCargarTexturas("caust11.png");
+	agua[12] = myCargarTexturas("caust12.png");
+	agua[13] = myCargarTexturas("caust12.png");
+	agua[14] = myCargarTexturas("caust14.png");
+	agua[15] = myCargarTexturas("caust15.png");
 
 	//myMovimiento();
+	moverAgua();
 	myMenu();
+	myIluminacion();
+
 	// cubo = myCubo(cielo);
 	cuadrado = myCuadrado(hierba);
 	cilindro = myCilindro();
