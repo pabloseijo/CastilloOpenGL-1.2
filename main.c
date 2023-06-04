@@ -246,14 +246,14 @@ void dibujaSoldado(int posicion_x, int posicion_z) {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 
-	//Torre frontal 1: tejado
+	//Cabeza
 	glPushMatrix();
 		glTranslatef(posicion_x, 5, posicion_z);
-		glScalef(10, 10, 10);
+		glScalef(8, 8, 8);
 		//
-		glRotatef(-45.0f, 0, 1, 0);
+		glRotatef(122.5f, 0, 1, 0);
 		//Lo roto para ponerlo de pie
-		glRotatef(90.0f, 1, 0, 0);
+		glRotatef(180.0f, 1, 0, 0);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, cara);
 		glCallList(esfera);
@@ -733,7 +733,7 @@ int main(int argc, char** argv) {
 
 	//soldados
 	armadura = myCargarTexturas("armadura.jpg");
-	cara = myCargarTexturas("face.png");
+	cara = myCargarTexturas("cara.jpg");
 
 	//Luces
 	//Sol
