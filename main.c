@@ -19,7 +19,7 @@ int W_HEIGHT = 500;		//Alto de la ventana
 //Milisegundos que tarda en redibujar
 #define MYTIEMPO 41
 
-// 脕ngulos de rotaci贸n para la c谩mara
+// 羘gulos de rotaci髇 para la c醡ara
 static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
 
@@ -28,9 +28,18 @@ int agua_indice = 0;
 
 // Definir el color gris claro de la niebla
 GLfloat gray[] = { 0.7, 0.7, 0.7, 1.0 };
-// Configurar la posici贸n de la niebla
+// Configurar la posici髇 de la niebla
 GLfloat fog_start = 800.0;
 GLfloat fog_end = 1000.0;
+
+body cuerpo = { -350, -22, -250, 4, 12, 4, 0, 0 };
+head cabeza = { 0, -6, 0, 6, 6, 6, 0, 0 };
+arm brazo_izq = { 0, -6, 0, 1, 7, 1, 0, 0 };
+arm brazo_der;
+leg pierna_izq = { 0, -30, 0, 1.5, 12, 1.5, 0, 0 };
+leg pierna_der;
+personaje protagonista = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
 
 float Rot = 0;
 camara = 0;
@@ -47,7 +56,7 @@ void reshape(int width, int height);
 void skyBox();
 
 //Texturas paisaje
-int hierba = 0, tejado = 0, muro = 0, cielo = 0, tejadoCasa[5], muroCasa[5], tronco = 0, hojas = 0, armadura = 0, cara = 0;
+int hierba = 0, tejado = 0, muro = 0, cielo = 0, tejadoCasa[5], muroCasa[5], tronco = 0, hojas = 0, armadura = 0, cara = 0, pantalones = 0;
 
 int flag = 0;
 
@@ -71,7 +80,12 @@ void onMenu(int opcion) {
 	case 2:
 		camara = 2;
 		break;
+
+	case 3:
+		camara = 3;
+		break;
 	}
+
 	glutPostRedisplay();
 }
 
@@ -82,7 +96,8 @@ void myMenu(void) {
 	menuFondo = glutCreateMenu(onMenu);
 
 	glutAddMenuEntry("Voyayer", 1); //La sonda que nos muestra todo el sistema
-	glutAddMenuEntry("Cubo", 2);
+	glutAddMenuEntry("Primera Persona", 2);
+	glutAddMenuEntry("Tercera Persona", 3);
 
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
@@ -233,11 +248,60 @@ int myRectangulo() {
 }
 
 void dibujaSoldado(int posicion_x, int posicion_z) {
+	//Piernas
+	glPushMatrix();
+		glTranslatef(posicion_x - 2, -30, posicion_z);
+		glScalef(1.5, 12, 1.5);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, pantalones);
+		glCallList(cilindro);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+	//Piernas
+	glPushMatrix();
+		glTranslatef(posicion_x+2, -30, posicion_z);
+		glScalef(1.5, 12, 1.5);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, pantalones);
+		glCallList(cilindro);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
 	//Tronco
 	glPushMatrix();
-		glTranslatef(posicion_x, -25, posicion_z);
-		glScalef(5, 25, 5);
+		glTranslatef(posicion_x, -22, posicion_z);
+		glScalef(4, 12, 4);
 	//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, armadura);
+		glCallList(cilindro);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+	//Brazos
+	glPushMatrix();
+		glTranslatef(posicion_x - 5, -20, posicion_z);
+		glScalef(1, 7, 1);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, armadura);
+		glCallList(cilindro);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+	//Brazos
+	glPushMatrix();
+		glTranslatef(posicion_x + 5, -20, posicion_z);
+		glScalef(1, 7, 1);
+		//Lo roto para ponerlo de pie
 		glRotatef(-90.0f, 1, 0, 0);
 		glEnable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, armadura);
@@ -248,8 +312,8 @@ void dibujaSoldado(int posicion_x, int posicion_z) {
 
 	//Cabeza
 	glPushMatrix();
-		glTranslatef(posicion_x, 5, posicion_z);
-		glScalef(8, 8, 8);
+		glTranslatef(posicion_x, -6, posicion_z);
+		glScalef(6, 6, 6);
 		//
 		glRotatef(122.5f, 0, 1, 0);
 		//Lo roto para ponerlo de pie
@@ -260,8 +324,6 @@ void dibujaSoldado(int posicion_x, int posicion_z) {
 		glDisable(GL_TEXTURE_2D);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
-
-
 }
 
 //Funcion para dibujar el suelo
@@ -286,7 +348,7 @@ void dibujaSuelo() {
 void dibujaMuros() {
 	//Muro Frontal 
 	glPushMatrix();
-	glTranslatef(0, 0, 100);
+	glTranslatef(0, 15, 100);
 	glScalef(175, 100, 20);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
@@ -295,7 +357,7 @@ void dibujaMuros() {
 
 	//Muro Lateral Izq
 	glPushMatrix();
-	glTranslatef(-100, 0, 0);
+	glTranslatef(-100, 15, 0);
 	glRotatef(-90.0f, 0, 1, 0);
 	glScalef(175, 100, 20);
 	//Lo roto para ponerlo de pie
@@ -305,7 +367,7 @@ void dibujaMuros() {
 
 	//Muro Lateral Dcho
 	glPushMatrix();
-	glTranslatef(100, 0, 0);
+	glTranslatef(100, 15, 0);
 	glRotatef(-90.0f, 0, 1, 0);
 	glScalef(175, 100, 20);
 	//Lo roto para ponerlo de pie
@@ -315,7 +377,7 @@ void dibujaMuros() {
 
 	//Muro Trasero 
 	glPushMatrix();
-	glTranslatef(0, 0, -100);
+	glTranslatef(0, 15, -100);
 	glScalef(175, 100, 20);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
@@ -327,7 +389,7 @@ void dibujaTorre() {
 
 	//Torre frontal 1: paredes
 	glPushMatrix();
-	glTranslatef(100, -25, 100);
+	glTranslatef(100, -30, 100);
 	glScalef(25, 150, 25);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
@@ -340,7 +402,7 @@ void dibujaTorre() {
 
 	//Torre frontal 1: tejado
 	glPushMatrix();
-	glTranslatef(100, 150, 100);
+	glTranslatef(100, 145, 100);
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -354,7 +416,7 @@ void dibujaTorre() {
 	//Torre frontal 2: paredes
 	glPushMatrix();
 	//traslado 200 en el eje x
-	glTranslatef(-100, -25, 100);
+	glTranslatef(-100, -30, 100);
 	glScalef(25, 150, 25);
 	glRotatef(-90.0f, 1, 0, 0);
 	glEnable(GL_TEXTURE_2D);
@@ -366,7 +428,7 @@ void dibujaTorre() {
 
 	//Torre frontal 2: tejado
 	glPushMatrix();
-	glTranslatef(-100, 150, 100);
+	glTranslatef(-100, 145, 100);
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -379,7 +441,7 @@ void dibujaTorre() {
 
 	//Torre trasera 1:paredes
 	glPushMatrix();
-	glTranslatef(100, -25, -100);
+	glTranslatef(100, -30, -100);
 	glScalef(25, 150, 25);
 	glRotatef(-90.0f, 1, 0, 0);
 	glEnable(GL_TEXTURE_2D);
@@ -391,7 +453,7 @@ void dibujaTorre() {
 
 	//Torre trasera 1: tejado
 	glPushMatrix();
-	glTranslatef(100, 150, -100);
+	glTranslatef(100, 145, -100);
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -404,7 +466,7 @@ void dibujaTorre() {
 
 	//Torre trasera 2: paredes
 	glPushMatrix();
-	glTranslatef(-100, -25, -100);
+	glTranslatef(-100, -30, -100);
 	glScalef(25, 150, 25);
 	glRotatef(-90.0f, 1, 0, 0);
 	glEnable(GL_TEXTURE_2D);
@@ -416,7 +478,7 @@ void dibujaTorre() {
 
 	//Torre trasera 2: tejado
 	glPushMatrix();
-	glTranslatef(-100, 150, -100);
+	glTranslatef(-100, 145, -100);
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -432,7 +494,7 @@ void dibujaCastillo() {
 
 	//Muro Frontal 
 	glPushMatrix();
-	glTranslatef(0, 25, 0);
+	glTranslatef(0, 35, 0);
 	glScalef(100, 150, 100);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
@@ -441,7 +503,7 @@ void dibujaCastillo() {
 
 	//Torre frontal 1: paredes
 	glPushMatrix();
-	glTranslatef(0, 50, 0);
+	glTranslatef(0, 60, 0);
 	glScalef(25, 150, 25);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
@@ -454,7 +516,7 @@ void dibujaCastillo() {
 
 	//Torre frontal 1: tejado
 	glPushMatrix();
-	glTranslatef(0, 230, 0);
+	glTranslatef(0, 240, 0);
 	glScalef(35, 35, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -471,7 +533,7 @@ void dibujaCasa(int posicion_x, int posicion_z, int muro, int tejado) {
 
 	//Torre frontal 1: paredes
 	glPushMatrix();
-	glTranslatef(posicion_x, -25, posicion_z);
+	glTranslatef(posicion_x, -30, posicion_z);
 	glScalef(35, 50, 35);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
@@ -484,7 +546,7 @@ void dibujaCasa(int posicion_x, int posicion_z, int muro, int tejado) {
 
 	//Torre frontal 1: tejado
 	glPushMatrix();
-	glTranslatef(posicion_x, 60, posicion_z);
+	glTranslatef(posicion_x, 55, posicion_z);
 	glScalef(45, 45, 45);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -500,7 +562,7 @@ void dibujaArbol(int posicion_x, int posicion_z) {
 
 	//Tronco
 	glPushMatrix();
-	glTranslatef(posicion_x, -25, posicion_z);
+	glTranslatef(posicion_x, -30, posicion_z);
 	glScalef(5, 50, 5);
 	//Lo roto para ponerlo de pie
 	glRotatef(-90.0f, 1, 0, 0);
@@ -513,7 +575,7 @@ void dibujaArbol(int posicion_x, int posicion_z) {
 
 	//Torre frontal 1: tejado
 	glPushMatrix();
-	glTranslatef(posicion_x, 40, posicion_z);
+	glTranslatef(posicion_x, 35, posicion_z);
 	glScalef(20, 20, 20);
 	//Lo roto para ponerlo de pie
 	glRotatef(90.0f, 1, 0, 0);
@@ -538,8 +600,16 @@ void myMovimiento() {
 void myDisplay(void) {
 	// Clear the window with current clearing color
 
+	if (camara == 1) {
+		myCamara(W_WIDTH, W_HEIGHT);
+	}
+	else if (camara == 2) {
+		primeraPersona(protagonista);
+	}
+	else if (camara == 3) {
+		terceraPersona(protagonista);
+	}
 
-	myCamara(W_WIDTH, W_HEIGHT);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -550,7 +620,7 @@ void myDisplay(void) {
 	// Habilitar la niebla
 	glEnable(GL_FOG);
 
-	// Configurar los par谩metros de niebla
+	// Configurar los par醡etros de niebla
 	glFogi(GL_FOG_MODE, GL_LINEAR);
 	glFogfv(GL_FOG_COLOR, gray);
 
@@ -583,6 +653,8 @@ void myDisplay(void) {
 	dibujaCasa(-500, 134, 3, 3);
 	dibujaCasa(-245, 398, 4, 4);
 
+	srand(33);
+
 	for (int i = 0; i < 100; i++) {
 		int randomX = rand() % 1000 + 300;
 		int randomZ = rand() % 1000 + 300;
@@ -596,6 +668,8 @@ void myDisplay(void) {
 
 		dibujaSoldado(randomX, randomZ);
 	}
+
+	dibujaProtagonista(protagonista);
 
 	glPopMatrix();
 	glPopMatrix();
@@ -685,7 +759,7 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(myDisplay);
 	// Funcion de actualizacion
 	glutIdleFunc(Idle);
-	// Funci贸n de devoluci贸n de llamada para el cambio de tama帽o de la ventana
+	// Funci髇 de devoluci髇 de llamada para el cambio de tama駉 de la ventana
 	glutReshapeFunc(reshape);
 
 	//Habilito las texturas
@@ -730,6 +804,7 @@ int main(int argc, char** argv) {
 	//Arboles
 	tronco = myCargarTexturas("tronco.jpg");
 	hojas = myCargarTexturas("hojas.png");
+	pantalones = myCargarTexturas("pantalones.jpg");
 
 	//soldados
 	armadura = myCargarTexturas("armadura.jpg");
@@ -751,6 +826,28 @@ int main(int argc, char** argv) {
 	cono = myCono();
 	rectangulo = myRectangulo();
 	esfera = myEsfera();
+
+	cabeza.px = cuerpo.px;
+	cabeza.pz = cuerpo.pz;
+	cabeza.lista_render = esfera;
+	cabeza.textura = cara;
+	brazo_izq.px = cuerpo.px - 5;
+	brazo_izq.pz = cuerpo.pz;
+	brazo_der.px = cuerpo.px + 5;
+	brazo_der.pz = cuerpo.pz;
+	cuerpo.textura = brazo_der.textura = brazo_izq.lista_render = armadura;
+	pierna_izq.px = cuerpo.px - 2;
+	pierna_izq.pz = cuerpo.pz;
+	pierna_der.px = cuerpo.px + 2;
+	pierna_der.pz = cuerpo.pz;
+	brazo_izq.lista_render = brazo_der.lista_render = pierna_der.lista_render = pierna_izq.lista_render = cuerpo.lista_render = cilindro;
+	pierna_der.textura = pierna_izq.textura = pantalones;
+	protagonista.cabeza = cabeza;
+	protagonista.cuerpo = cuerpo;
+	protagonista.brazo_der = brazo_der;
+	protagonista.brazo_izq = brazo_izq;
+	protagonista.pierna_der = pierna_der;
+	protagonista.pierna_izq = pierna_izq;
 
 	// Empieza en bucle principal
 	glutMainLoop();

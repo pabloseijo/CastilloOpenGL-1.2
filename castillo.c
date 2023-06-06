@@ -46,50 +46,141 @@ void myCamara(int ancho, int alto) {
 
 }
 
-void myTelescopio(float distancia, float angulo, float distanciaObj, float anguloObj) {
-
-	//Configuracion de la matriz de proyeccion
+void primeraPersona(personaje protagonista) {
 	glMatrixMode(GL_PROJECTION);
-
-	//La ponemos a uno
 	glLoadIdentity();
-	gluPerspective(45.0, (float)W_WIDTH / W_HEIGHT, 1.0, 2000.0f);
-	gluLookAt(distancia * cos(angulo * PI / 180.0), 0, -1 * distancia * sin(angulo * PI / 180.0),
-		distanciaObj * cos(anguloObj * PI / 180.0), 0, -1 * distanciaObj * sin(anguloObj * PI / 180.0),
-		0, 1, 0);
+	gluPerspective(45.0, 1.0, .001, 500.0);
+	gluLookAt(protagonista.cabeza.px + 10, protagonista.cabeza.py, protagonista.cabeza.pz + 10,
+		protagonista.cabeza.px * cos(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.py * sin(protagonista.angulo_tras_x * PI / 180.0), 1.0,
+		0.0, 1.0, 0.0);
 }
 
-void myTelescopioSatelite(float distancia, float angulo, float distanciaObj, float anguloObj) {
-
-	//Configuración de la matriz de proyección
+void terceraPersona(personaje protagonista) {
 	glMatrixMode(GL_PROJECTION);
-
-	//La ponemos a uno
 	glLoadIdentity();
+	gluPerspective(45.0, 1.0, .1, 500.0);
+	gluLookAt(protagonista.cabeza.px + 100 * cos(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.py + 100 * sin(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.pz + 150,
+		protagonista.cabeza.px + cos(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.py + sin(protagonista.angulo_tras_x), 50.0,
+		0.0, 1.0, 0.0);
+}
 
-	//Calculamos la posición de la luna en coordenadas cartesianas
-	float PosicionLunaX = distancia * cos(angulo * (PI / 180.0)) + distanciaObj * cos(anguloObj * (PI / 180.0) + angulo * (PI / 180.0));
-	float PosicionLunaZ = distancia * sin(angulo * (PI / 180.0)) + distanciaObj * sin(anguloObj * (PI / 180.0) + angulo * (PI / 180.0));
+void dibujaProtagonista(personaje protagonista) {
+	//Piernas
+	glPushMatrix();
+	glTranslatef(protagonista.pierna_der.px - 2, -30, protagonista.pierna_der.pz - 2);
+	glScalef(1.5, 12, 1.5);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glRotatef(protagonista.angulo_tras_x, 0.0, 0.0, 1.0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, protagonista.pierna_der.textura);
+	glCallList(protagonista.pierna_der.lista_render);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+	//Piernas
+	glPushMatrix();
+	glTranslatef(protagonista.pierna_izq.px + 2, -30, protagonista.pierna_izq.pz);
+	glScalef(1.5, 12, 1.5);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glRotatef(protagonista.angulo_tras_x, 0.0, 0.0, 1.0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, protagonista.pierna_izq.textura);
+	glCallList(protagonista.pierna_izq.lista_render);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+	//Tronco
+	glPushMatrix();
+	glTranslatef(protagonista.cuerpo.px, -22, protagonista.cuerpo.pz);
+	glScalef(4, 12, 4);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glRotatef(protagonista.angulo_tras_x, 0.0, 0.0, 1.0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, protagonista.cuerpo.textura);
+	glCallList(protagonista.cuerpo.lista_render);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
 
-	//Configuramos la matriz de proyección con la perspectiva y la matriz de vista con la posición de la cámara y la luna
-	gluPerspective(45.0, (float)W_WIDTH / W_HEIGHT, 1.0, 2000.0f);
-	gluLookAt(distancia * cos(angulo * (PI / 180.0)), 0, -1 * distancia * sin(angulo * (PI / 180.0)),
-		PosicionLunaX, 0, -1 * PosicionLunaZ,
-		0, 1, 0);
+	//Brazos
+	glPushMatrix();
+		glTranslatef(protagonista.brazo_der.px - 5, -20, protagonista.brazo_der.pz);
+		glScalef(1, 7, 1);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glRotatef(protagonista.angulo_tras_x, 0.0, 0.0, 1.0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, protagonista.brazo_der.textura);
+		glCallList(protagonista.brazo_der.lista_render);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+	//Brazos
+	glPushMatrix();
+		glTranslatef(protagonista.brazo_izq.px + 5, -20, protagonista.brazo_izq.pz);
+		glScalef(1, 7, 1);
+		//Lo roto para ponerlo de pie
+		glRotatef(-90.0f, 1, 0, 0);
+		glRotatef(protagonista.angulo_tras_x, 0.0, 0.0, 1.0);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, protagonista.brazo_izq.textura);
+		glCallList(protagonista.brazo_izq.lista_render);
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
+
+	//Cabeza
+	glPushMatrix();
+	glTranslatef(protagonista.cabeza.px, -6, protagonista.cabeza.pz);
+	glScalef(6, 6, 6);
+	//
+	glRotatef(122.5f, 0, 1, 0);
+	//Lo roto para ponerlo de pie
+	glRotatef(180.0f, 1, 0, 0);
+	glRotatef(protagonista.angulo_tras_x, 0.0, 0.0, 1.0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, protagonista.cabeza.textura);
+	glCallList(protagonista.cabeza.lista_render);
+	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glPopMatrix();
 }
 
 void myTeclado(unsigned char tras, int x, int y)
 {
 	switch (tras) {
-	case 'l':
+	case 's':
+		// Mueve la grúa hacia atrás
+		break;
+	case 'w':
+		// Mueve la grúa hacia delante
+		protagonista.cuerpo.px += cos(protagonista.angulo_tras_x * PI / 180.0f);
+		protagonista.cuerpo.pz += sin(protagonista.angulo_tras_x * PI / 180.0f);
+		
+		protagonista.cabeza.px += cos(protagonista.angulo_tras_x * PI / 180.0f);
+		protagonista.cabeza.pz += sin(protagonista.angulo_tras_x * PI / 180.0f);
 
-		break;
-	case 'c':
-		break;
-	case 'r':
-		break;
-	case 'p':
+		protagonista.brazo_der.px += cos(protagonista.angulo_tras_x * PI / 180.0f);
+		protagonista.brazo_der.pz += sin(protagonista.angulo_tras_x * PI / 180.0f);
 
+		protagonista.brazo_izq.px += cos(protagonista.angulo_tras_x * PI / 180.0f);
+		protagonista.brazo_izq.pz += sin(protagonista.angulo_tras_x * PI / 180.0f);
+
+		protagonista.pierna_der.px += cos(protagonista.angulo_tras_x * PI / 180.0f);
+		protagonista.pierna_der.pz += sin(protagonista.angulo_tras_x * PI / 180.0f);
+
+		protagonista.pierna_izq.px += cos(protagonista.angulo_tras_x * PI / 180.0f);
+		protagonista.pierna_izq.pz += sin(protagonista.angulo_tras_x * PI / 180.0f);
+		break;
+	case 'a':
+		protagonista.angulo_tras_x++;
+		break;
+	case 'd':
+		protagonista.angulo_tras_x--;
 		break;
 	case 'o':
 		glDisable(GL_LIGHTING);
