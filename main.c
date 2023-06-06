@@ -19,7 +19,7 @@ int W_HEIGHT = 500;		//Alto de la ventana
 //Milisegundos que tarda en redibujar
 #define MYTIEMPO 41
 
-// 羘gulos de rotaci髇 para la c醡ara
+// 脕ngulos de rotaci贸n para la c谩mara
 static GLfloat xRot = 0.0f;
 static GLfloat yRot = 0.0f;
 
@@ -28,9 +28,9 @@ int agua_indice = 0;
 
 // Definir el color gris claro de la niebla
 GLfloat gray[] = { 0.7, 0.7, 0.7, 1.0 };
-// Configurar la posici髇 de la niebla
-GLfloat fog_start = 800.0;
-GLfloat fog_end = 1000.0;
+// Configurar la posici贸n de la niebla
+GLfloat fog_start = 600.0;
+GLfloat fog_end = 800.0;
 
 body cuerpo = { -350, -22, -250, 4, 12, 4, 0, 0 };
 head cabeza = { 0, -6, 0, 6, 6, 6, 0, 0 };
@@ -39,7 +39,6 @@ arm brazo_der;
 leg pierna_izq = { 0, -30, 0, 1.5, 12, 1.5, 0, 0 };
 leg pierna_der;
 personaje protagonista = { 0, 0, 0, 0, 0, 0, 0, 0 };
-
 
 float Rot = 0;
 camara = 0;
@@ -84,6 +83,14 @@ void onMenu(int opcion) {
 	case 3:
 		camara = 3;
 		break;
+
+	case 4:
+		camara = 4;
+		break;
+
+	case 5:
+		camara = 5;
+		break;
 	}
 
 	glutPostRedisplay();
@@ -98,6 +105,8 @@ void myMenu(void) {
 	glutAddMenuEntry("Voyayer", 1); //La sonda que nos muestra todo el sistema
 	glutAddMenuEntry("Primera Persona", 2);
 	glutAddMenuEntry("Tercera Persona", 3);
+	glutAddMenuEntry("Activar Niebla", 4);
+	glutAddMenuEntry("Desactivar Niebla", 5);
 
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
@@ -250,79 +259,79 @@ int myRectangulo() {
 void dibujaSoldado(int posicion_x, int posicion_z) {
 	//Piernas
 	glPushMatrix();
-		glTranslatef(posicion_x - 2, -30, posicion_z);
-		glScalef(1.5, 12, 1.5);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, pantalones);
-		glCallList(cilindro);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glTranslatef(posicion_x - 2, -30, posicion_z);
+	glScalef(1.5, 12, 1.5);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, pantalones);
+	glCallList(cilindro);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 	//Piernas
 	glPushMatrix();
-		glTranslatef(posicion_x+2, -30, posicion_z);
-		glScalef(1.5, 12, 1.5);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, pantalones);
-		glCallList(cilindro);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glTranslatef(posicion_x + 2, -30, posicion_z);
+	glScalef(1.5, 12, 1.5);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, pantalones);
+	glCallList(cilindro);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 	//Tronco
 	glPushMatrix();
-		glTranslatef(posicion_x, -22, posicion_z);
-		glScalef(4, 12, 4);
+	glTranslatef(posicion_x, -22, posicion_z);
+	glScalef(4, 12, 4);
 	//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, armadura);
-		glCallList(cilindro);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glRotatef(-90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, armadura);
+	glCallList(cilindro);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 
 	//Brazos
 	glPushMatrix();
-		glTranslatef(posicion_x - 5, -20, posicion_z);
-		glScalef(1, 7, 1);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, armadura);
-		glCallList(cilindro);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glTranslatef(posicion_x - 5, -20, posicion_z);
+	glScalef(1, 7, 1);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, armadura);
+	glCallList(cilindro);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 	//Brazos
 	glPushMatrix();
-		glTranslatef(posicion_x + 5, -20, posicion_z);
-		glScalef(1, 7, 1);
-		//Lo roto para ponerlo de pie
-		glRotatef(-90.0f, 1, 0, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, armadura);
-		glCallList(cilindro);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glTranslatef(posicion_x + 5, -20, posicion_z);
+	glScalef(1, 7, 1);
+	//Lo roto para ponerlo de pie
+	glRotatef(-90.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, armadura);
+	glCallList(cilindro);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 
 	//Cabeza
 	glPushMatrix();
-		glTranslatef(posicion_x, -6, posicion_z);
-		glScalef(6, 6, 6);
-		//
-		glRotatef(122.5f, 0, 1, 0);
-		//Lo roto para ponerlo de pie
-		glRotatef(180.0f, 1, 0, 0);
-		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, cara);
-		glCallList(esfera);
-		glDisable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, 0);
+	glTranslatef(posicion_x, -6, posicion_z);
+	glScalef(6, 6, 6);
+	//
+	glRotatef(122.5f, 0, 1, 0);
+	//Lo roto para ponerlo de pie
+	glRotatef(180.0f, 1, 0, 0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, cara);
+	glCallList(esfera);
+	glDisable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glPopMatrix();
 }
 
@@ -609,27 +618,50 @@ void myDisplay(void) {
 	else if (camara == 3) {
 		terceraPersona(protagonista);
 	}
+	else if (camara == 4) {
+		myCamara(W_WIDTH, W_HEIGHT);
+		// Habilitar la niebla
+		glEnable(GL_FOG);
+
+		// Configurar los par谩metros de niebla
+		glFogi(GL_FOG_MODE, GL_LINEAR);
+		glFogfv(GL_FOG_COLOR, gray);
+
+		glFogf(GL_FOG_START, fog_start);
+		glFogf(GL_FOG_END, fog_end);
+
+		// Configurar la densidad de la niebla
+		GLfloat fog_density = 0.5;
+		glFogf(GL_FOG_DENSITY, fog_density);
+	}
+	else if (camara == 5) {
+		myCamara(W_WIDTH, W_HEIGHT);
+		// Deshabilitar la niebla
+		glDisable(GL_FOG);
+	}
 
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glMatrixMode(GL_MODELVIEW); //Matriz del Modelo
-	//glLoadIdentity(); // Inicializamos la matriz del modelo a la identidad
+	glLoadIdentity(); // Inicializamos la matriz del modelo a la identidad
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	// Habilitar la niebla
-	glEnable(GL_FOG);
+	if (camara == 4) {
+		// Habilitar la niebla
+		glEnable(GL_FOG);
 
-	// Configurar los par醡etros de niebla
-	glFogi(GL_FOG_MODE, GL_LINEAR);
-	glFogfv(GL_FOG_COLOR, gray);
+		// Configurar los par谩metros de niebla
+		glFogi(GL_FOG_MODE, GL_LINEAR);
+		glFogfv(GL_FOG_COLOR, gray);
 
-	glFogf(GL_FOG_START, fog_start);
-	glFogf(GL_FOG_END, fog_end);
+		glFogf(GL_FOG_START, fog_start);
+		glFogf(GL_FOG_END, fog_end);
 
-	// Configurar la densidad de la niebla
-	GLfloat fog_density = 0.5;
-	glFogf(GL_FOG_DENSITY, fog_density);
+		// Configurar la densidad de la niebla
+		GLfloat fog_density = 0.2;
+		glFogf(GL_FOG_DENSITY, fog_density);
+	}
 
 	glDisable(GL_LIGHTING);
 	skyBox();
@@ -647,8 +679,8 @@ void myDisplay(void) {
 	//dibujamos el castillo
 	dibujaCastillo();
 
-	dibujaCasa(-300,  -200, 0, 0);
-	dibujaCasa(-450 , -300, 1, 1);
+	dibujaCasa(-300, -200, 0, 0);
+	dibujaCasa(-450, -300, 1, 1);
 	dibujaCasa(-200, 168, 2, 2);
 	dibujaCasa(-500, 134, 3, 3);
 	dibujaCasa(-245, 398, 4, 4);
@@ -662,9 +694,9 @@ void myDisplay(void) {
 		dibujaArbol(randomX, randomZ);
 	}
 
-	for (int i = 0; i < 200; i++) {
-		int randomX = rand() % 1000 + 300;
-		int randomZ = rand() % 1000 - 1300;
+	for (int i = 0; i < 32; i++) {
+		int randomX = rand() % 600 + 50;
+		int randomZ = -(rand() % 600 + 50);
 
 		dibujaSoldado(randomX, randomZ);
 	}
@@ -715,7 +747,6 @@ int myCargarTexturas(char* name) {
 	return textura;
 }
 
-
 void skyBox() {
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE); // Habilita la ocultacion de caras
@@ -759,7 +790,7 @@ int main(int argc, char** argv) {
 	glutDisplayFunc(myDisplay);
 	// Funcion de actualizacion
 	glutIdleFunc(Idle);
-	// Funci髇 de devoluci髇 de llamada para el cambio de tama駉 de la ventana
+	// Funci贸n de devoluci贸n de llamada para el cambio de tama帽o de la ventana
 	glutReshapeFunc(reshape);
 
 	//Habilito las texturas
