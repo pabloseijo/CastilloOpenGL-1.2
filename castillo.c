@@ -14,22 +14,6 @@ float beta = 0;
 
 
 
-//void myCamara(GLint W, GLint H) {
-//		
-//	//Configuración de la matriz de proyeccion
-//	glMatrixMode(GL_PROJECTION);
-//	//La ponemos auno
-//	glLoadIdentity();
-//
-//	////Ajusta la vista a las dimensiones de la ventana
-//	glViewport(0, 0, W_WIDTH, W_HEIGHT);
-//
-//	//glOrtho(-1.0,1.0f,-1.0,1.0f,1.0,10.0f);  
-//	gluPerspective(30.0,(float)W_WIDTH / W_HEIGHT, 1.0, 5000.0f);
-//	gluLookAt(((float)DISTANCIA*(float) sin(alpha)*cos(beta)),((float)DISTANCIA*(float) sin(beta)), ((float)DISTANCIA*cos(alpha)*cos(beta)), 0,0,0,0,1,0);  
-//
-//}
-
 
 void myCamara(int ancho, int alto) {
 
@@ -49,18 +33,18 @@ void myCamara(int ancho, int alto) {
 void primeraPersona(personaje protagonista) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0, 1.0, .001, 500.0);
-	gluLookAt(protagonista.cabeza.px + 10, protagonista.cabeza.py, protagonista.cabeza.pz + 10,
-		protagonista.cabeza.px * cos(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.py * sin(protagonista.angulo_tras_x * PI / 180.0), 1.0,
+	gluPerspective(45.0, (float)W_WIDTH / (float)W_HEIGHT, .1, 2500.0);
+	gluLookAt(protagonista.cabeza.px + 10, protagonista.cabeza.py + 30, protagonista.cabeza.pz + 10,
+		protagonista.cabeza.px + cos(protagonista.angulo_tras_x * PI / 180.0) + 10, 20 + sin(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.pz + sin(protagonista.angulo_tras_x * PI / 180.0) + 10,
 		0.0, 1.0, 0.0);
 }
 
 void terceraPersona(personaje protagonista) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	gluPerspective(45.0, 1.0, .1, 500.0);
-	gluLookAt(protagonista.cabeza.px + 100 * cos(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.py + 100 * sin(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.pz + 150,
-		protagonista.cabeza.px + cos(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.py + sin(protagonista.angulo_tras_x), 50.0,
+	gluPerspective(45.0, (float)W_WIDTH / (float)W_HEIGHT, .1, 2500.0);
+	gluLookAt(protagonista.cabeza.px - 150 * cos(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.py + 150, protagonista.cabeza.pz - 150 * sin(protagonista.angulo_tras_x * PI / 180.0),
+		protagonista.cabeza.px + cos(protagonista.angulo_tras_x * PI / 180.0), protagonista.cabeza.py, protagonista.cabeza.pz + sin(protagonista.angulo_tras_x),
 		0.0, 1.0, 0.0);
 }
 
@@ -260,7 +244,7 @@ void moverAgua() {
 	if (agua_indice == 15)
 		agua_indice = 0;
 	glutPostRedisplay();
-	glutTimerFunc(300, moverAgua, 0); // aumentar el tiempo a 300 ms
+	glutTimerFunc(1000, moverAgua, 0); // aumentar el tiempo a 300 ms
 }
 
 void dibujaAgua() {

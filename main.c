@@ -41,7 +41,7 @@ leg pierna_der;
 personaje protagonista = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 float Rot = 0;
-camara = 0;
+camara = 1;
 sueloScale = 50;
 int cuadrado = 0, cono = 0, cilindro = 0, rectangulo = 0, cubo = 0, esfera = 0, soldado = 0;
 
@@ -619,7 +619,6 @@ void myDisplay(void) {
 		terceraPersona(protagonista);
 	}
 	else if (camara == 4) {
-		myCamara(W_WIDTH, W_HEIGHT);
 		// Habilitar la niebla
 		glEnable(GL_FOG);
 
@@ -635,7 +634,6 @@ void myDisplay(void) {
 		glFogf(GL_FOG_DENSITY, fog_density);
 	}
 	else if (camara == 5) {
-		myCamara(W_WIDTH, W_HEIGHT);
 		// Deshabilitar la niebla
 		glDisable(GL_FOG);
 	}
@@ -749,7 +747,7 @@ int myCargarTexturas(char* name) {
 
 void skyBox() {
 	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE); // Habilita la ocultacion de caras
+	glDisable(GL_CULL_FACE); // Deshabilita la ocultacion de caras
 	glDisable(GL_NORMALIZE);
 
 	glPushMatrix();
