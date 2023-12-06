@@ -1,31 +1,31 @@
-# 🏰 Proyecto de Castillo en OpenGL 1.2
+# 🏰 OpenGL 1.2 Castle Project
 
-Este proyecto consiste en la creación de un castillo en 3D utilizando la biblioteca de gráficos OpenGL 1.2. El castillo contará con texturas, iluminación y otros efectos visuales para crear una experiencia visual impresionante.
+This project involves creating a 3D castle using the OpenGL 1.2 graphics library. The castle will feature textures, lighting, and other visual effects to create an impressive visual experience.
 
-## 📋 Requisitos
+## 📋 Requirements
 
 - 🌟 OpenGL 1.2
-- 💻 C++11 o superior
-- 🎨 Una tarjeta gráfica compatible con OpenGL
-- 📚 Una biblioteca de carga de texturas, como SOIL o FreeImage
+- 💻 C++11 or higher
+- 🎨 An OpenGL-compatible graphics card
+- 📚 A texture loading library, such as SOIL or FreeImage
 
-## 🌈 Funcionalidades
+## 🌈 Features
 
-El proyecto incluirá las siguientes funcionalidades:
+The project will include the following features:
 
-- 🏰 Un castillo en 3D con torres, muros y puertas.
-- 🎨 Texturas de alta calidad para las paredes, puertas, ventanas y otros detalles del castillo.
-- 💡 Iluminación ambiental y puntual para dar profundidad y realismo a la escena.
-- 🌗 Sombras dinámicas para simular la interacción de la luz con los objetos en el castillo.
+- 🏰 A 3D castle with towers, walls, and gates.
+- 🎨 High-quality textures for walls, doors, windows, and other castle details.
+- 💡 Ambient and point lighting to add depth and realism to the scene.
+- 🌗 Dynamic shadows to simulate the interaction of light with objects in the castle.
 
-## 🚀 Uso
+## 🚀 Usage
 
-Para ejecutar el proyecto, simplemente compile el código fuente utilizando un compilador compatible con C++11 o superior y ejecute el archivo resultante. Asegúrese de tener las bibliotecas de OpenGL y de carga de texturas instaladas y configuradas correctamente.
+To run the project, simply compile the source code using a compiler compatible with C++11 or higher and execute the resulting file. Make sure you have the OpenGL and texture loading libraries installed and correctly configured.
 
-## 🤝 Contribuciones
+## 🤝 Contributing
 
-Este proyecto es de código abierto y las contribuciones son bienvenidas. Si desea contribuir, por favor abra un issue o una pull request en el repositorio de Github.
+This project is open-source, and contributions are welcome. If you would like to contribute, please open an issue or a pull request in the GitHub repository.
 
-## 👥 Créditos
+## 👥 Credits
 
-Este proyecto fue creado por Pablo Seijo y Pablo Lobato como parte de Computación Gráfica en la ETSE. Se utilizaron códigos fuente para inspiración de algunas funciones de Miguel Leal.
+This project was created by Pablo Seijo and Pablo Lobato as part of the Computer Graphics course at ETSE. Source codes were used for inspiration for some functions by Miguel Leal.
